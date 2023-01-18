@@ -14,6 +14,7 @@ class Router {
     static public function route($path) {
         try {
             $endpoint = Router::GetEndpoint($path);
+            $endpoint->run();
         } catch (InvalidEndpointException $e) {
             ErrorHandler::HandleInvalidEndpointException($e);
         }

@@ -2,6 +2,8 @@
 
 namespace App\Endpoint;
 
+use App\Exception\UnimplementedException;
+
 class Endpoint {
     protected $query_params;
 
@@ -11,5 +13,9 @@ class Endpoint {
 
     public function getWithDefault(string $key, $default) {
         return $this->query_params[$key] ?? $default;
+    }
+
+    public function run() {
+        throw new UnimplementedException("This function must be overridden by a derived class");
     }
 }

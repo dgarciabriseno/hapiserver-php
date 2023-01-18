@@ -3,9 +3,14 @@
 require_once "../vendor/autoload.php";
 
 use App\Router;
+use App\Error\ErrorHandler;
 
-$path = get_url_path();
-Router::route($path);
+try {
+    $path = get_url_path();
+    Router::route($path);
+} catch (Exception $e) {
+    ErrorHandler::HandleInternalError($e);
+}
 
 function get_url_path() : string {
     return parse_url($_SERVER["REQUEST_URI"],  PHP_URL_PATH);
