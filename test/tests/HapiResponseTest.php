@@ -18,4 +18,34 @@ final class HapiResponseTest extends TestCase {
         $this->assertEquals(1405, $result->status->code);
         $this->assertEquals("Bad Request Again", $result->status->message);
     }
+
+    public function testCombinesDataAndStatusArray() {
+        $response = new HapiResponse(1200, "Good job");
+        $data = array(
+            "custom" => "data",
+            "exists" => "in",
+            "this" => "array"
+        );
+        $result = $response->getDataArray($data);
+        $this->assertEquals(1200, $result['status']['code']);
+        $this->assertEquals("Good job", $result['status']['message']);
+        $this->assertEquals("data", $result['custom']);
+        $this->assertEquals("in", $result['exists']);
+        $this->assertEquals("array", $result['this']);
+    }
+
+    public function testCombinesDataAndStatusJson() {
+        $response = new HapiResponse(1200, "Good job");
+        $data = array(
+            "custom" => "data",
+            "exists" => "in",
+            "this" => "array"
+        );
+        $result = json_decode($response->getDataJson($data));
+        $this->assertEquals(1200, $result->status->code);
+        $this->assertEquals("Good job", $result->status->message);
+        $this->assertEquals("data", $result->custom);
+        $this->assertEquals("in", $result->exists);
+        $this->assertEquals("array", $result->this);
+    }
 }

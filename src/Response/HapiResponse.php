@@ -1,7 +1,6 @@
 <?php declare(strict_types=1);
 
 namespace App\Response;
-use App\Response\HttpResponse;
 
 class HapiResponse {
     protected $code;
@@ -16,6 +15,23 @@ class HapiResponse {
     public function sendStatusToClient() {
         header("Content-Type: application/json");
         echo $this->getStatusJson();
+    }
+
+    public function sendDataToClient(array $data) {
+        $response = $this->getDataArray($data);
+    }
+
+    public function getDataArray(array $data) : array {
+        return $this->mergeDataWithStatus($data);
+    }
+
+    public function getDataJson(array $data) : string {
+        return json_encode($this->getDataArray($data));
+    }
+
+    private function mergeDataWithStatus(array $data) : array {
+        $status = $this->getStatusArray();
+        return array_merge($data, $status);
     }
 
     public function getStatusArray() : array {
