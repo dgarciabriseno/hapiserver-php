@@ -12,13 +12,19 @@ class HapiResponse {
         $this->message = $message;
     }
 
-    public function sendStatusToClient() {
+    private function sendJsonToClient(string $json) {
         header("Content-Type: application/json");
-        echo $this->getStatusJson();
+        echo $json;
     }
 
-    public function sendDataToClient(array $data) {
-        $response = $this->getDataArray($data);
+    public function sendStatusToClient() {
+        $status = $this->getStatusJson();
+        $this->sendJsonToClient($status);
+    }
+
+    public function sendJsonDataToClient(array $data) {
+        $json = $this->getDataJson($data);
+        $this->sendJsonToClient($json);
     }
 
     public function getDataArray(array $data) : array {
