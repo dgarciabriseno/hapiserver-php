@@ -8,6 +8,7 @@ use App\Endpoint\InfoEndpoint;
 use App\Endpoint\DataEndpoint;
 use App\Endpoint\Endpoint;
 use App\Error\ErrorHandler;
+use App\Exception\ConfigNotFoundException;
 use App\Exception\InvalidEndpointException;
 
 class Router {
@@ -17,6 +18,8 @@ class Router {
             $endpoint->run();
         } catch (InvalidEndpointException $e) {
             ErrorHandler::HandleInvalidEndpointException($e);
+        } catch (ConfigNotFoundException $e) {
+            ErrorHandler::HandleConfigNotFoundException($e);
         }
     }
 
