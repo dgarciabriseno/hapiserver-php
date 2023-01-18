@@ -1,2 +1,2 @@
 #!/bin/bash
-../vendor/bin/phpunit tests
+../vendor/bin/phpunit --testdox tests
