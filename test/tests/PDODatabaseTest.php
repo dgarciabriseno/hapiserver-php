@@ -30,4 +30,10 @@ final class PDODatabaseTest extends TestCase {
         $startDate = $db->GetStartDate("ExampleDataset");
         $this->assertEquals('2022-01-01T05:00:00.123Z', $startDate);
     }
+
+    public function testCanGetStopDate() {
+        $db = new PDODatabase("App\Database\MySQLStatements");
+        $stopDate = $db->GetStopDate("ExampleDataset");
+        $this->assertEquals('2022-01-31T00:00:00.789Z', $stopDate);
+    }
 }

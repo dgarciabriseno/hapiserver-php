@@ -40,6 +40,14 @@ class MySQLStatements implements StatementProvider {
         return $this->pdo->prepare($sql);
     }
 
+    public function GetStopDate(string $table, string $time_column) : PDOStatement {
+        $this->VerifySafeDataOrThrowException($table);
+        $this->VerifySafeDataOrThrowException($time_column);
+        $sql = sprintf("SELECT TIMESTAMP(MAX(%s)) as StopDate FROM %s",
+            $time_column, $table);
+        return $this->pdo->prepare($sql);
+    }
+
     private function VerifySafeDataOrThrowException(string $data) {
         // Only allow alphanumeric characters. quotes, slashes, etc are all violations.
         if (!ctype_alnum($data)) {

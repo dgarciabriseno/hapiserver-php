@@ -104,7 +104,11 @@ class PDODatabase implements DataRetrievalInterface {
     }
 
     public function GetStopDate(string $dataset) : string {
-        return "Unimplemented";
+        $table = $this->getTableForDataset($dataset);
+        $column = $this->getTimeColumn($dataset, $table);
+        $statement = $this->statement_provider->GetStopDate($table, $column);
+        $result = $this->ExecuteStatementAndFetchResults($statement);
+        return DateUtils::SQLDateToIsoDate($result[0]["StopDate"]);
     }
 
     protected function getTableForDataset($dataset) : string {

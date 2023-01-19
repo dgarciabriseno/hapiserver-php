@@ -27,6 +27,7 @@ final class InfoEndpointTest extends TestCase {
         $this->assertArrayHasKey("startDate", $data);
         $this->assertArrayHasKey("stopDate", $data);
         $this->assertEquals("2022-01-01T05:00:00.123Z", $data['startDate']);
+        $this->assertEquals("2022-01-31T00:00:00.789Z", $data['stopDate']);
     }
 
     public function testThrowsExceptionForNonexistentDataset() {
