@@ -6,4 +6,5 @@ use PDOStatement;
 
 interface StatementProvider {
     public function GetColumnNames($database, $table) : PDOStatement;
+    public function GetStartDate(string $table, string $time_column) : PDOStatement;
 }

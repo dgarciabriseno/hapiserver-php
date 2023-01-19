@@ -31,7 +31,8 @@ class HapiType {
         "smallint" => "integer",
 
         "isotime" => "isotime",
-        "datetime" => "isotime"
+        "datetime" => "isotime",
+        "timestamp" => "isotime"
     );
 
     public static function GetTypeFor(string $type) : string {

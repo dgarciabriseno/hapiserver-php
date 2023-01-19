@@ -3,9 +3,11 @@
 namespace App\Database;
 
 use App\Exception\DatabaseException;
+use App\Exception\UnimplementedException;
 use App\Util\Config;
 use App\Util\DatasetInfo;
 use App\Util\DatasetMetadataReader;
+use App\Util\DateUtils;
 use App\Util\HapiType;
 use PDO;
 use PDOException;
@@ -21,9 +23,6 @@ class PDODatabase implements DataRetrievalInterface {
         $user = Credentials::GetDatabaseUser();
         $pass = Credentials::GetDatabasePassword();
         $connection_string = $this->buildConnectionString();
-        error_log($user);
-        error_log($pass);
-        error_log($connection_string);
         try {
             $this->pdo = new PDO($connection_string, $user, $pass);
         } catch (PDOException $e) {
@@ -87,7 +86,21 @@ class PDODatabase implements DataRetrievalInterface {
     }
 
     public function GetStartDate(string $dataset) : string {
-        return "Unimplemented";
+        $table = $this->getTableForDataset($dataset);
+        $column = $this->getTimeColumn($dataset, $table);
+        $statement = $this->statement_provider->GetStartDate($table, $column);
+        $result = $this->ExecuteStatementAndFetchResults($statement);
+        return DateUtils::SQLDateToIsoDate($result[0]["StartDate"]);
+    }
+
+    protected function getTimeColumn(string $dataset) : string {
+        $key = $dataset . "_TimeColumn";
+        $config = Config::getInstance();
+        $column = $config->getWithDefault($key, "");
+        if ($column == "") {
+            throw new UnimplementedException("Config is missing the time column for the dataset: $dataset");
+        }
+        return $column;
     }
 
     public function GetStopDate(string $dataset) : string {

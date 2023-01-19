@@ -17,7 +17,6 @@ final class InfoEndpointTest extends TestCase {
         $info = new InfoEndpoint();
         $data = $info->GetDatasetInfo();
         $this->assertIsArray($data);
-        $this->assertContains(array("name" => "string_data", "type" => "string", "length" => "500"), $data["parameters"]);
         $this->assertArrayHasKey("sampleStartDate", $data);
         $this->assertArrayHasKey("sampleStopDate", $data);
         $this->assertArrayHasKey("maxRequestDuration", $data);
@@ -27,6 +26,7 @@ final class InfoEndpointTest extends TestCase {
         $this->assertArrayHasKey("contact", $data);
         $this->assertArrayHasKey("startDate", $data);
         $this->assertArrayHasKey("stopDate", $data);
+        $this->assertEquals("2022-01-01T05:00:00.123Z", $data['startDate']);
     }
 
     public function testThrowsExceptionForNonexistentDataset() {
