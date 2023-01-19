@@ -16,8 +16,8 @@ class DataResponse extends HapiResponse {
 
     public function sendAsJson() {
         header("Content-Type: application/json");
-        $this->sendHeaderIfNotEmpty();
-        $json = json_encode($this->data);
+        $final_data = array_merge($this->header, array("data" => $this->data));
+        $json = json_encode($final_data);
         echo $json;
     }
 
