@@ -10,7 +10,7 @@ final class EndpointTest extends TestCase {
         $endpoint = new Endpoint();
         $this->assertEquals(
             10,
-            $endpoint->getWithDefault('id', 0)
+            $endpoint->getRequestParameterWithDefault('id', 0)
         );
     }
 
@@ -18,7 +18,7 @@ final class EndpointTest extends TestCase {
         $endpoint = new Endpoint();
         $this->assertEquals(
             22,
-            $endpoint->getWithDefault('id', 22)
+            $endpoint->getRequestParameterWithDefault('id', 22)
         );
     }
 

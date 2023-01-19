@@ -11,7 +11,7 @@ class Endpoint {
         $this->query_params = $_GET;
     }
 
-    public function getWithDefault(string $key, $default) {
+    public function getRequestParameterWithDefault(string $key, $default) {
         return $this->query_params[$key] ?? $default;
     }
 

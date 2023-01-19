@@ -8,8 +8,7 @@ use App\Util\Catalog;
 
 class CatalogEndpoint extends Endpoint {
     public function run() {
-        $catalog = new Catalog();
         $response = new GoodResponse();
-        $response->sendJsonDataToClient($catalog->getArray());
+        $response->sendJsonDataToClient(Catalog::getArray());
     }
 }

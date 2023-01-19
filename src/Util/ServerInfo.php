@@ -34,9 +34,9 @@ class ServerInfo {
 
     protected function GetOptionalFieldsFromConfig() : array {
         $optional = array (
-            "description" => $this->config->getWithDefault("description", ""),
-            "contactID" => $this->config->getWithDefault("contact_id", ""),
-            "citation" => $this->config->getWithDefault("citation", "")
+            "description" => $this->config->getWithDefault("server_description", ""),
+            "contactID" => $this->config->getWithDefault("server_contact_id", ""),
+            "citation" => $this->config->getWithDefault("server_citation", "")
         );
         return $this->removeEmptyValuesFromArray($optional);
     }

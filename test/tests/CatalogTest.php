@@ -5,9 +5,13 @@ use App\Util\Catalog;
 
 final class CatalogTest extends TestCase {
     public function testRetrievesTheCatalog() {
-        $catalog = new Catalog();
-        $data = $catalog->getArray();
+        $data = Catalog::getArray();
         $this->assertIsArray($data);
         $this->assertArrayHasKey("catalog", $data);
+    }
+
+    public function testValidatesDatasets() {
+        $this->assertTrue(Catalog::hasDataset("ExampleDataset"));
+        $this->assertFalse(Catalog::hasDataset("Nonexistent Dataset"));
     }
 }

@@ -13,7 +13,7 @@ class ErrorLogger {
         }
     }
 
-    private static function GetExceptionLines(Exception $e) {
+    public static function GetExceptionLines(Exception $e) {
         $message = "$e";
         return explode("\n", $message);
     }

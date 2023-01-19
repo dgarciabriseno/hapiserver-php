@@ -9,17 +9,21 @@ use App\Endpoint\DataEndpoint;
 use App\Endpoint\Endpoint;
 use App\Error\ErrorHandler;
 use App\Exception\ConfigNotFoundException;
-use App\Exception\InvalidEndpointException;
+use App\Exception\DatabaseException;
+use App\Exception\UserInputException;
+use App\Response\HapiCode;
 
 class Router {
     static public function route($path) {
         try {
             $endpoint = Router::GetEndpoint($path);
             $endpoint->run();
-        } catch (InvalidEndpointException $e) {
-            ErrorHandler::HandleInvalidEndpointException($e);
+        } catch (UserInputException $e) {
+            ErrorHandler::HandleUserInputException($e);
         } catch (ConfigNotFoundException $e) {
             ErrorHandler::HandleConfigNotFoundException($e);
+        } catch (DatabaseException $e) {
+            ErrorHandler::HandleDatabaseException($e);
         }
     }
 
@@ -37,7 +41,7 @@ class Router {
             case "data":
                 return new DataEndpoint();
             default:
-                throw new InvalidEndpointException($resource);
+                throw new UserInputException(HapiCode::USER_ERROR, "Invalid endpoint: $resource");
         }
     }
 }
