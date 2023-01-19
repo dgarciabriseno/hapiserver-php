@@ -67,7 +67,7 @@ final class PDODatabaseTest extends TestCase {
         $db = new PDODatabase("App\Database\MySQLStatements");
         $start = new DateTimeImmutable("2021-01-01T00:00:00Z");
         $stop = new DateTimeImmutable("2023-01-01T00:00:00Z");
-        $this->expectException(UnsafeDataException::class);
+        $this->expectException(UserInputException::class);
         $db->QueryData("ExampleDataset", array("column_name' --"), $start, $stop);
     }
 }

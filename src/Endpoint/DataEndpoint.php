@@ -17,8 +17,9 @@ class DataEndpoint extends Endpoint {
         $start = $this->ValidateAndGetRequestedStartTime();
         $stop = $this->ValidateAndGetRequestedStopTime();
         $this->ValidateStartDateIsBeforeEndDate($start, $stop);
+        $parameters = $this->GetRequestedParameters();
 
-        $data = $this->QueryData($dataset, $start, $stop);
+        $data = $this->QueryData($dataset, $parameters, $start, $stop);
         $response = new DataResponse($data);
 
         $format = $this->getRequestParameterWithDefault("format", "csv");
@@ -32,8 +33,17 @@ class DataEndpoint extends Endpoint {
             }
     }
 
-    public function QueryData(string $dataset, DateTimeImmutable $start, DateTimeImmutable $stop) {
+    public function QueryData(string $dataset, array $parameters, DateTimeImmutable $start, DateTimeImmutable $stop) {
         $db = Database::getInstance();
-        return $db->QueryData($dataset, array(), $start, $stop);
+        return $db->QueryData($dataset, $parameters, $start, $stop);
+    }
+
+    public function GetRequestedParameters() {
+        $parameters = $this->getRequestParameterWithDefault("parameters", "");
+        if ($parameters == "") {
+            return array();
+        } else {
+            return explode(',', $parameters);
+        }
     }
 }

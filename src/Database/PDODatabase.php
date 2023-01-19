@@ -145,6 +145,13 @@ class PDODatabase implements DataRetrievalInterface {
         $this->ValidateDatasetDates($dataset, $start, $stop);
         if (empty($parameters)) {
             $parameters = $this->GetParametersAsList($dataset);
+        } else {
+            $dataset_parameters = $this->GetParametersAsList($dataset);
+            foreach ($parameters as $requested_param) {
+                if (!in_array($requested_param, $dataset_parameters)) {
+                    throw new UserInputException(HapiCode::UNKNOWN_DATASET_PARAMETER, "$requested_param is not part of dataset $dataset");
+                }
+            }
         }
         $table = $this->getTableForDataset($dataset);
         $time_column = $this->getTimeColumn($dataset, $table);
