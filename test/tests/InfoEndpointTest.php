@@ -42,4 +42,24 @@ final class InfoEndpointTest extends TestCase {
         $info = new InfoEndpoint();
         $info->ValidateRequestedDataset();
     }
+
+    public function testReturnsParameterSubsets() {
+        $_GET["dataset"] = "ExampleDataset";
+        $_GET["parameters"] = "decimal_data,timestamp";
+        $info = new InfoEndpoint();
+        $data = $info->GetDatasetInfo();
+        $parameters = $data['parameters'];
+        $returned_parameters = array_map(function ($arr) { return $arr['name']; }, $parameters);
+        $this->assertContains("decimal_data", $returned_parameters);
+        $this->assertContains("timestamp", $returned_parameters);
+        $this->assertNotContains("string_data", $returned_parameters);
+    }
+
+    public function testThrowsDatasetParameterErrors() {
+        $_GET["dataset"] = "ExampleDataset";
+        $_GET["parameters"] = "decimal_data,timestamp,not_a_real_parameter";
+        $info = new InfoEndpoint();
+        $this->expectException(UserInputException::class);
+        $data = $info->GetDatasetInfo();
+    }
 }
