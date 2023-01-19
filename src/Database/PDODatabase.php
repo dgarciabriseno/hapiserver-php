@@ -4,11 +4,14 @@ namespace App\Database;
 
 use App\Exception\DatabaseException;
 use App\Exception\UnimplementedException;
+use App\Exception\UserInputException;
+use App\Response\HapiCode;
 use App\Util\Config;
 use App\Util\DatasetInfo;
 use App\Util\DatasetMetadataReader;
 use App\Util\DateUtils;
 use App\Util\HapiType;
+use DateTimeImmutable;
 use PDO;
 use PDOException;
 use PDOStatement;
@@ -57,6 +60,15 @@ class PDODatabase implements DataRetrievalInterface {
         return $result;
     }
 
+    protected function GetParametersAsList(string $dataset) : array {
+        $info = $this->FetchParameters($dataset);
+        $parameters = array();
+        foreach ($info as $row) {
+            array_push($parameters, $row["COLUMN_NAME"]);
+        }
+        return $parameters;
+    }
+
     protected function FetchParameters(string $dataset) : array {
         // For a database backed instance, the "parameters" returned for a dataset correspond to the column names.
         $table = $this->getTableForDataset($dataset);
@@ -64,10 +76,10 @@ class PDODatabase implements DataRetrievalInterface {
         return $this->ExecuteStatementAndFetchResults($pdo_statement);
     }
 
-    protected function ExecuteStatementAndFetchResults(PDOStatement $pdo_statement) : array {
+    protected function ExecuteStatementAndFetchResults(PDOStatement $pdo_statement, int $fetchMode = PDO::FETCH_BOTH) : array {
         $query_was_successful = $pdo_statement->execute();
         if ($query_was_successful) {
-            return $pdo_statement->fetchAll();
+            return $pdo_statement->fetchAll($fetchMode);
         } else {
             throw new DatabaseException("Failed to get parameters from the database.", $pdo_statement->errorInfo());
         }
@@ -127,6 +139,30 @@ class PDODatabase implements DataRetrievalInterface {
         $reader = new DatasetMetadataReader($dataset);
         $metadata = $reader->GetMetadata();
         return array_merge($metadata, array("startDate" => $startDate, "stopDate" => $endDate));
+    }
+
+    public function QueryData(string $dataset, array $parameters, DateTimeImmutable $start, DateTimeImmutable $stop): array {
+        $this->ValidateDatasetDates($dataset, $start, $stop);
+        if (empty($parameters)) {
+            $parameters = $this->GetParametersAsList($dataset);
+        }
+        $table = $this->getTableForDataset($dataset);
+        $time_column = $this->getTimeColumn($dataset, $table);
+        $query = $this->statement_provider->QueryData($table, $time_column, $parameters, $start, $stop);
+        $result = $this->ExecuteStatementAndFetchResults($query, PDO::FETCH_NUM);
+        return $result;
+    }
+
+    public function ValidateDatasetDates(string $dataset, DateTimeImmutable $start, DateTimeImmutable $stop) {
+        $dataset_start_date = new DateTimeImmutable($this->GetStartDate($dataset));
+        if ($stop < $dataset_start_date) {
+            throw new UserInputException(HapiCode::TIME_OUTSIDE_RANGE, "Stop time is before the start of the dataset time range");
+        }
+
+        $dataset_stop_date = new DateTimeImmutable($this->GetStopDate($dataset));
+        if ($start > $dataset_stop_date) {
+            throw new UserInputException(HapiCode::TIME_OUTSIDE_RANGE, "Start time is after the end of the dataset time range");
+        }
     }
 }
 

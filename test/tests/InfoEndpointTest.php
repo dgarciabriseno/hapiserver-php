@@ -34,13 +34,13 @@ final class InfoEndpointTest extends TestCase {
         $_GET["dataset"] = "One that doesn't exist";
         $this->expectException(UserInputException::class);
         $info = new InfoEndpoint();
-        $info->ValidateRequestedDataset();
+        $info->AssertRequestedDatasetIsValid();
     }
 
     public function testDoesNotThrowExceptionForRealDataset() {
         $_GET["dataset"] = "ExampleDataset";
         $info = new InfoEndpoint();
-        $info->ValidateRequestedDataset();
+        $info->AssertRequestedDatasetIsValid();
     }
 
     public function testReturnsParameterSubsets() {

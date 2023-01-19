@@ -12,7 +12,7 @@ class HapiResponse {
         $this->message = $message;
     }
 
-    private function sendJsonToClient(string $json) {
+    protected function sendJsonToClient(string $json) {
         header("Content-Type: application/json");
         echo $json;
     }

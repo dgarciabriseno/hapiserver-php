@@ -3,6 +3,7 @@
 namespace App\Database;
 
 use App\Exception\UnsafeDataException;
+use DateTimeImmutable;
 use PDO;
 use PDOStatement;
 
@@ -49,9 +50,33 @@ class MySQLStatements implements StatementProvider {
     }
 
     private function VerifySafeDataOrThrowException(string $data) {
-        // Only allow alphanumeric characters. quotes, slashes, etc are all violations.
-        if (!ctype_alnum($data)) {
-            throw new UnsafeDataException("Caught unsafe data attempting to be used in a SQL query");
+        // Only allow alphanumeric characters, and underscores. quotes, slashes, etc are all violations.
+        preg_match('/^[a-zA-Z_0-9]+$/', $data, $matches);
+        if (count($matches) == 0 || $matches[0] != $data) {
+            throw new UnsafeDataException("Caught unsafe data attempting to be used in a SQL query: $data");
         }
+    }
+
+    private function VerifySafeColumnsOrThrowException(array $columns) {
+        foreach ($columns as $column) {
+            $this->VerifySafeDataOrThrowException($column);
+        }
+    }
+
+    public function QueryData(string $table, string $time_column, array $columns, DateTimeImmutable $start, DateTimeImmutable $stop): PDOStatement {
+        $this->VerifySafeDataOrThrowException($table);
+        $this->VerifySafeDataOrThrowException($time_column);
+        $this->VerifySafeColumnsOrThrowException($columns);
+        $sql = sprintf("
+            SELECT %s FROM %s WHERE %s >= :start_time AND %s < :stop_time
+        ",
+            implode(',', $columns),
+            $table,
+            $time_column,
+            $time_column);
+        $statement = $this->pdo->prepare($sql);
+        $statement->bindValue("start_time", $start->format('Y-m-d H:i:s.v'));
+        $statement->bindValue("stop_time", $stop->format('Y-m-d H:i:s.v'));
+        return $statement;
     }
 }
