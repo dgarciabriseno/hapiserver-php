@@ -20,7 +20,13 @@ class DataEndpoint extends Endpoint {
         $parameters = $this->GetRequestedParameters();
 
         $data = $this->QueryData($dataset, $parameters, $start, $stop);
-        $response = new DataResponse($data);
+
+        $header = array();
+        if ($this->getRequestParameterWithDefault("include", "") == "header") {
+            $header = $this->GetDataHeader($dataset);
+        }
+
+        $response = new DataResponse($data, $header);
 
         $format = $this->getRequestParameterWithDefault("format", "csv");
         switch ($format) {
@@ -45,5 +51,10 @@ class DataEndpoint extends Endpoint {
         } else {
             return explode(',', $parameters);
         }
+    }
+
+    public function GetDataHeader(string $dataset) {
+        $info = new InfoEndpoint();
+        return $info->GetDatasetInfo($dataset);
     }
 }
