@@ -99,14 +99,14 @@ class PDODatabase implements DataRetrievalInterface {
 
     public function GetStartDate(string $dataset) : string {
         $table = $this->getTableForDataset($dataset);
-        $column = $this->getTimeColumn($dataset, $table);
+        $column = $this->getTimeColumn($table);
         $statement = $this->statement_provider->GetStartDate($table, $column);
         $result = $this->ExecuteStatementAndFetchResults($statement);
         return DateUtils::SQLDateToIsoDate($result[0]["StartDate"]);
     }
 
-    protected function getTimeColumn(string $dataset) : string {
-        $key = $dataset . "_TimeColumn";
+    protected function getTimeColumn(string $table) : string {
+        $key = $table . "_TimeColumn";
         $config = Config::getInstance();
         $column = $config->getWithDefault($key, "");
         if ($column == "") {
@@ -117,7 +117,7 @@ class PDODatabase implements DataRetrievalInterface {
 
     public function GetStopDate(string $dataset) : string {
         $table = $this->getTableForDataset($dataset);
-        $column = $this->getTimeColumn($dataset, $table);
+        $column = $this->getTimeColumn($table);
         $statement = $this->statement_provider->GetStopDate($table, $column);
         $result = $this->ExecuteStatementAndFetchResults($statement);
         return DateUtils::SQLDateToIsoDate($result[0]["StopDate"]);
@@ -154,7 +154,7 @@ class PDODatabase implements DataRetrievalInterface {
             }
         }
         $table = $this->getTableForDataset($dataset);
-        $time_column = $this->getTimeColumn($dataset, $table);
+        $time_column = $this->getTimeColumn($table);
         $query = $this->statement_provider->QueryData($table, $time_column, $parameters, $start, $stop);
         $result = $this->ExecuteStatementAndFetchResults($query, PDO::FETCH_NUM);
         return $result;
@@ -174,7 +174,7 @@ class PDODatabase implements DataRetrievalInterface {
 
     public function QueryDataCount(string $dataset, DateTimeImmutable $start, DateTimeImmutable $stop) : int {
         $table = $this->getTableForDataset($dataset);
-        $time_column = $this->getTimeColumn($dataset, $table);
+        $time_column = $this->getTimeColumn($table);
         $statement = $this->statement_provider->QueryDataCount($table, $time_column, $start, $stop);
         $result = $this->ExecuteStatementAndFetchResults($statement);
         return intval($result[0]['count']);
