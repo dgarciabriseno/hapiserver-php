@@ -82,4 +82,15 @@ final class PDODatabaseTest extends TestCase {
         $this->assertEquals(1, $count);
 
     }
+
+    public function testReadsTheWhitelist() {
+        $db = new PDODatabase("App\Database\MySQLStatements");
+        $whitelist = $db->GetColumnWhitelist("TestDataset");
+        $this->assertCount(4, $whitelist);
+        $this->assertFalse(in_array('id', $whitelist));
+        $this->assertTrue(in_array('decimal_data', $whitelist));
+        $this->assertTrue(in_array('float_data', $whitelist));
+        $this->assertTrue(in_array('string_data', $whitelist));
+        $this->assertTrue(in_array('timestamp', $whitelist));
+    }
 }

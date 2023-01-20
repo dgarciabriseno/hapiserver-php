@@ -45,6 +45,12 @@ class PDODatabase implements DataRetrievalInterface {
         $info = $this->FetchParameters($dataset);
         $result = array();
         foreach($info as $row) {
+            // Skip any columns that are not whitelisted.
+            $whitelist = $this->GetColumnWhitelistForDataset($dataset);
+            if (!in_array($row["COLUMN_NAME"], $whitelist)) {
+                continue;
+            }
+
             $parameter = array(
                 "name" => $row["COLUMN_NAME"],
                 "type" => HapiType::GetTypeFor($row["DATA_TYPE"]),
@@ -58,6 +64,16 @@ class PDODatabase implements DataRetrievalInterface {
             array_push($result, $parameter);
         }
         return $result;
+    }
+
+    public function GetColumnWhitelistForDataset(string $dataset) : array {
+        $table = $this->getTableForDataset($dataset);
+        return $this->GetColumnWhitelist($table);
+    }
+
+    public function GetColumnWhitelist(string $table) : array {
+        $config = Config::getInstance();
+        return $config->getWithDefault($table . '_ColumnWhitelist', array());
     }
 
     protected function GetParametersAsList(string $dataset) : array {
