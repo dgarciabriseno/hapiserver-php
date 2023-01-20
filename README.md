@@ -1,7 +1,8 @@
-# hapi-server-php
-This software was written for use in Helioviewer's API for querying solar image data.
-The intent is that it is a generic HAPI server connected to SQL database as the data backend.
-Ideally only a configuration file specifying the databases, columns, and descriptions should be required to spin up a hapi server.
+# hapiserver-php
+This software is intended to provide HAPI server capabilities to a dataset stored in a MySQL database.
+(Other SQL databases may work, though will need some minor tinkering).
+The intent is that it is a generic HAPI Front End that can be configured to serve any SQL table.
+To use, simply edit the example configuration file to specify database credentials, columns, and server metadata (contact info, ownership, etc).
 
 ## Definitions
 HAPI uses its own set of definitions for data and datasets.
@@ -11,22 +12,35 @@ Since this software is a database-backed design, each definitions translates thi
 - *record* - Table row
 - *parameter* - Table Column
 
-## Endpoints
-These endpoints are supported by the generic interface
 
-### Capabilities
-The server supports `csv` and `json`.
-`Binary` capability is not supported since some database columns may have a variable size.
+## What is supported?
+- Use a config file to specify server metadata returned by `/hapi/about`
+- Define your database details and dataset information in a config file and have it automatically served through the `catalog`, `info`, and `data` endpoints.
+- Easily spin up a HAPI server in front of an existing SQL database.
+- Data returned in `json` or `csv` formats.
 
-### About
-Returns server metadata specified in the configuration file
+## Limitations
+- The current implementation does not support *Additional Metadata* in the info endpoint.
+- Arrays and bins as a data type are not supported
+- Fill is currently not supported, `fill: null` is returned
+- Field labels are not supported in the info endpoint yet.
+- If each of your data points is a scalar value, then this will work for you.
+- Request limiting with maxRequestDuration. As such, you probably shouldn't use this yet if you have a very large dataset.
+- Request limiting with error 1408 - too much data requested.
+- HAPI error codes are not returned in the HTTP status, only in the response body.
+- No HAPI landing page
 
-### Catalog
-Returns the list of available databases, specified in the configuration file
+# Installation and Setup
+- Setup your webserver to serve `public/index.php`
+- You need a rewrite rule so that all `/hapi/endpoints` routes get sent to index.php
 
-### Info
-Returns database column information.
-Descriptions must be defined manually in the configuration file.
+Example for apache2:
+```
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule .* index.php
+```
 
-### Data
-Returns rows of a database formatted in `csv` or `json` as requested.
+- Copy `config.example.ini` to `config.ini` and enter metadata about your server.
+  You should review every line in the config file since it all affects the behavior of your server.
+  The configuration is meant to be self-explanatory. If it's not, please open an issue so I can clarify what to set.
