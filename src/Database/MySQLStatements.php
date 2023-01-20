@@ -51,7 +51,7 @@ class MySQLStatements implements StatementProvider {
 
     private function VerifySafeDataOrThrowException(string $data) {
         // Only allow alphanumeric characters, and underscores. quotes, slashes, etc are all violations.
-        preg_match('/^[a-zA-Z_0-9]+$/', $data, $matches);
+        preg_match('/^[a-zA-Z0-9_]+$/', $data, $matches);
         if (count($matches) == 0 || $matches[0] != $data) {
             throw new UnsafeDataException("Caught unsafe data attempting to be used in a SQL query: $data");
         }
@@ -77,6 +77,18 @@ class MySQLStatements implements StatementProvider {
         $statement = $this->pdo->prepare($sql);
         $statement->bindValue("start_time", $start->format('Y-m-d H:i:s.v'));
         $statement->bindValue("stop_time", $stop->format('Y-m-d H:i:s.v'));
+        return $statement;
+    }
+
+    public function QueryDataCount(string $table, string $time_column, DateTimeImmutable $start, DateTimeImmutable $stop): PDOStatement {
+        $this->VerifySafeDataOrThrowException($table);
+        $this->VerifySafeDataOrThrowException($time_column);
+        $sql = sprintf("
+            SELECT COUNT(*) as count FROM %s WHERE %s >= :start_time AND %s < :stop_time
+        ", $table, $time_column, $time_column);
+        $statement = $this->pdo->prepare($sql);
+        $statement->bindValue('start_time', $start->format('Y-m-d H:i:s.v'));
+        $statement->bindValue('stop_time', $stop->format('Y-m-d H:i:s.v'));
         return $statement;
     }
 }

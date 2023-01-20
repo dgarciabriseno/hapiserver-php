@@ -70,4 +70,16 @@ final class PDODatabaseTest extends TestCase {
         $this->expectException(UserInputException::class);
         $db->QueryData("ExampleDataset", array("column_name' --"), $start, $stop);
     }
+
+    public function testAbleToCountData() {
+        $db = new PDODatabase("App\Database\MySQLStatements");
+        // Covers the entire test dataset
+        $count = $db->QueryDataCount("ExampleDataset", new DateTimeImmutable('2020-01-01'), new DateTimeImmutable('2022-02-01'));
+        $this->assertEquals(3, $count);
+
+        // Covers part of the test dataset
+        $count = $db->QueryDataCount("ExampleDataset", new DateTimeImmutable('2022-01-16'), new DateTimeImmutable('2022-02-01'));
+        $this->assertEquals(1, $count);
+
+    }
 }

@@ -44,4 +44,15 @@ final class DataEndpointTest extends TestCase {
         // 2 years does not exceed 2 years
         $this->assertFalse($endpoint->DurationExceedsDuration($two_years, $two_years));
     }
+
+    public function testBlocksRequestsThatWouldReturnTooMuchData() {
+        $endpoint = new DataEndpoint();
+        $this->expectException(UserInputException::class);
+        $endpoint->BlockRequestIfQueryExceedsRecordLimit("ExampleDataset", new DateTimeImmutable('2020-01-01'), new DateTimeImmutable('2023-01-01'));
+    }
+
+    public function testAllowsRequestsThatWontReturnTooMuchData() {
+        $endpoint = new DataEndpoint();
+        $endpoint->BlockRequestIfQueryExceedsRecordLimit("ExampleDataset", new DateTimeImmutable('2022-01-16'), new DateTimeImmutable('2023-01-01'));
+    }
 }

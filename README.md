@@ -16,9 +16,10 @@ Since this software is a database-backed design, each definitions translates thi
 ## What is supported?
 - Use a config file to specify server metadata returned by `/hapi/about`
 - Define your database details and dataset information in a config file and have it automatically served through the `catalog`, `info`, and `data` endpoints.
-- Easily spin up a HAPI server in front of an existing SQL database.
+- Easily spin up a HAPI server in front of an existing SQL database without writing any code. (Unless you count modifying an ini file as code).
 - Data returned in `json` or `csv` formats.
-- Limiting requests per-dataset based on maxRequestDuration
+- Limiting requests per-dataset based on maxRequestDuration.
+- Limit requests to a maximum number of records through the configuration file.
 
 ## Limitations
 - The current implementation does not support *Additional Metadata* in the info endpoint.
@@ -26,9 +27,9 @@ Since this software is a database-backed design, each definitions translates thi
 - Fill is currently not supported, `fill: null` is returned
 - Field labels are not supported in the info endpoint yet.
 - If each of your data points is a scalar value, then this will work for you.
-- Request limiting with error 1408 - too much data requested.
 - HAPI error codes are not returned in the HTTP status, only in the response body.
 - No HAPI landing page
+- For security reasons, only alphanumeric characters and underscore are allowed in database or column names. For extra security, the database user you use to access your database should only be granted SELECT privileges.
 
 # Installation and Setup
 - Setup your webserver to serve `public/index.php`

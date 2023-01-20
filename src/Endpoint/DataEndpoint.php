@@ -4,10 +4,12 @@ namespace App\Endpoint;
 
 use App\Database\Database;
 use App\Endpoint\Endpoint;
+use App\Exception\ConfigNotFoundException;
 use App\Exception\UnimplementedException;
 use App\Exception\UserInputException;
 use App\Response\DataResponse;
 use App\Response\HapiCode;
+use App\Util\Config;
 use App\Util\DatasetInfoReader;
 use DateInterval;
 use DateTime;
@@ -22,6 +24,8 @@ class DataEndpoint extends Endpoint {
         $this->VerifyStartStopIsWithinMaxRequestDuration($dataset, $start, $stop);
         $this->ValidateStartDateIsBeforeEndDate($start, $stop);
         $parameters = $this->GetRequestedParameters();
+
+        $this->BlockRequestIfQueryExceedsRecordLimit($dataset, $start, $stop);
 
         $data = $this->QueryData($dataset, $parameters, $start, $stop);
 
@@ -85,5 +89,35 @@ class DataEndpoint extends Endpoint {
         $date_to_check->add($duration);
 
         return $date_to_check > $max_date;
+    }
+
+    public function BlockRequestIfQueryExceedsRecordLimit(string $dataset, DateTimeImmutable $start, DateTimeImmutable $stop) {
+        $config = Config::getInstance();
+        // config will return '1' when 'true' is specified in the configuration. It's a PHP thing.
+        $should_limit_records = $config->getWithDefault('enable_record_limit', '1') == '1';
+        if ($should_limit_records) {
+            $recordLimit = $this->GetRecordLimit($dataset);
+            $count = $this->GetRecordCount($dataset, $start, $stop);
+            var_dump($count);
+            if ($count > $recordLimit) {
+                throw new UserInputException(HapiCode::TOO_MUCH_DATA, "Request would return too much data, please reduce your time range");
+            }
+        }
+    }
+
+    public function GetRecordLimit(string $dataset) : int {
+        $config = Config::getInstance();
+        $record_limit_str = $config->getWithDefault('record_limit_' . $dataset, '10000');
+        $limit = intval($record_limit_str);
+        // intval returns 0 on failure.
+        if ($limit == 0) {
+            throw new ConfigNotFoundException("Unable to read configuration for record_limit_$dataset");
+        }
+        return $limit;
+    }
+
+    public function GetRecordCount(string $dataset, DateTimeImmutable $start, DateTimeImmutable $stop) : int {
+        $db = Database::getInstance();
+        return $db->QueryDataCount($dataset, $start, $stop);
     }
 }

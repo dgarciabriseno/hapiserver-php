@@ -50,7 +50,7 @@ class PDODatabase implements DataRetrievalInterface {
                 "type" => HapiType::GetTypeFor($row["DATA_TYPE"]),
                 "description" => $this->GetParameterDescription($dataset, $row["COLUMN_NAME"]),
                 "units" => $this->GetParameterUnit($dataset, $row["COLUMN_NAME"]),
-                "fill" => "null"
+                "fill" => null
             );
             if ($parameter["type"] == "string") {
                 $parameter = array_merge($parameter, array("length" => $row["CHARACTER_MAXIMUM_LENGTH"]));
@@ -81,7 +81,7 @@ class PDODatabase implements DataRetrievalInterface {
         if ($query_was_successful) {
             return $pdo_statement->fetchAll($fetchMode);
         } else {
-            throw new DatabaseException("Failed to get parameters from the database.", $pdo_statement->errorInfo());
+            throw new DatabaseException("Failed to get a result from the database.", $pdo_statement->errorInfo());
         }
     }
 
@@ -170,6 +170,14 @@ class PDODatabase implements DataRetrievalInterface {
         if ($start > $dataset_stop_date) {
             throw new UserInputException(HapiCode::TIME_OUTSIDE_RANGE, "Start time is after the end of the dataset time range");
         }
+    }
+
+    public function QueryDataCount(string $dataset, DateTimeImmutable $start, DateTimeImmutable $stop) : int {
+        $table = $this->getTableForDataset($dataset);
+        $time_column = $this->getTimeColumn($dataset, $table);
+        $statement = $this->statement_provider->QueryDataCount($table, $time_column, $start, $stop);
+        $result = $this->ExecuteStatementAndFetchResults($statement);
+        return intval($result[0]['count']);
     }
 }
 
