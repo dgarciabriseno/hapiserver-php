@@ -8,6 +8,9 @@ use App\Exception\UnimplementedException;
 use App\Exception\UserInputException;
 use App\Response\DataResponse;
 use App\Response\HapiCode;
+use App\Util\DatasetInfoReader;
+use DateInterval;
+use DateTime;
 use DateTimeImmutable;
 
 class DataEndpoint extends Endpoint {
@@ -16,6 +19,7 @@ class DataEndpoint extends Endpoint {
         $dataset = $this->GetRequestedDataset();
         $start = $this->ValidateAndGetRequestedStartTime();
         $stop = $this->ValidateAndGetRequestedStopTime();
+        $this->VerifyStartStopIsWithinMaxRequestDuration($dataset, $start, $stop);
         $this->ValidateStartDateIsBeforeEndDate($start, $stop);
         $parameters = $this->GetRequestedParameters();
 
@@ -56,5 +60,30 @@ class DataEndpoint extends Endpoint {
     public function GetDataHeader(string $dataset) {
         $info = new InfoEndpoint();
         return $info->GetDatasetInfo($dataset);
+    }
+
+    public function VerifyStartStopIsWithinMaxRequestDuration(string $dataset, DateTimeImmutable $start, DateTimeImmutable $stop) {
+        $datasetInfo = new DatasetInfoReader($dataset);
+        $maxDuration = $datasetInfo->GetMetadata()->GetMaxRequestDuration();
+        $requestDuration = $stop->diff($start);
+        if ($this->DurationExceedsDuration($requestDuration, $maxDuration)) {
+            throw new UserInputException(HapiCode::TOO_MUCH_DATA, "Request duration exceeds maxRequestDuration, please shorten your start and stop times");
+        }
+    }
+
+    public function DurationExceedsDuration(DateInterval $duration, DateInterval $limit) {
+        // Why aren't DateInterval's comparable in PHP???
+        // need to make sure calling DateTime->add always ADDS to the datetime.
+        // invert=1 leads to subtracting the dateinterval from the DateTime
+        $duration->invert = 0;
+        $limit->invert = 0;
+
+        $max_date = new DateTime();
+        $date_to_check = clone $max_date;
+
+        $max_date->add($limit);
+        $date_to_check->add($duration);
+
+        return $date_to_check > $max_date;
     }
 }

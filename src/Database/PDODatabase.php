@@ -8,7 +8,7 @@ use App\Exception\UserInputException;
 use App\Response\HapiCode;
 use App\Util\Config;
 use App\Util\DatasetInfo;
-use App\Util\DatasetMetadataReader;
+use App\Util\DatasetInfoReader;
 use App\Util\DateUtils;
 use App\Util\HapiType;
 use DateTimeImmutable;
@@ -136,8 +136,8 @@ class PDODatabase implements DataRetrievalInterface {
     public function GetDatasetMetadata(string $dataset) : array {
         $startDate = $this->GetStartDate($dataset);
         $endDate = $this->GetStopDate($dataset);
-        $reader = new DatasetMetadataReader($dataset);
-        $metadata = $reader->GetMetadata();
+        $reader = new DatasetInfoReader($dataset);
+        $metadata = $reader->GetMetadata()->asArray();
         return array_merge($metadata, array("startDate" => $startDate, "stopDate" => $endDate));
     }
 

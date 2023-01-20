@@ -5,7 +5,7 @@ namespace App\Util;
 /**
  * Reads metadata for a dataset from the config file
  */
-class DatasetMetadataReader {
+class DatasetInfoReader {
     protected Config $config;
     protected string $dataset;
 
@@ -14,7 +14,7 @@ class DatasetMetadataReader {
         $this->config = Config::getInstance();
     }
 
-    public function GetMetadata() {
+    public function GetMetadata() : DatasetInfo {
         $metadata = array();
         $this->PushOptionalMetadata($metadata, "timeStampLocation");
         $this->PushOptionalMetadata($metadata, "cadence");
@@ -31,7 +31,7 @@ class DatasetMetadataReader {
         $this->PushOptionalMetadata($metadata, "modificationDate");
         $this->PushOptionalMetadata($metadata, "contact");
         $this->PushOptionalMetadata($metadata, "contactID");
-        return $metadata;
+        return new DatasetInfo($metadata);
     }
 
     private function PushOptionalMetadata(array &$arr, string $metadata_key) {

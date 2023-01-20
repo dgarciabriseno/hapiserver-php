@@ -18,6 +18,7 @@ Since this software is a database-backed design, each definitions translates thi
 - Define your database details and dataset information in a config file and have it automatically served through the `catalog`, `info`, and `data` endpoints.
 - Easily spin up a HAPI server in front of an existing SQL database.
 - Data returned in `json` or `csv` formats.
+- Limiting requests per-dataset based on maxRequestDuration
 
 ## Limitations
 - The current implementation does not support *Additional Metadata* in the info endpoint.
@@ -25,7 +26,6 @@ Since this software is a database-backed design, each definitions translates thi
 - Fill is currently not supported, `fill: null` is returned
 - Field labels are not supported in the info endpoint yet.
 - If each of your data points is a scalar value, then this will work for you.
-- Request limiting with maxRequestDuration. As such, you probably shouldn't use this yet if you have a very large dataset.
 - Request limiting with error 1408 - too much data requested.
 - HAPI error codes are not returned in the HTTP status, only in the response body.
 - No HAPI landing page
