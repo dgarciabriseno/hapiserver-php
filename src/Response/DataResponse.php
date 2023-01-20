@@ -16,21 +16,26 @@ class DataResponse extends HapiResponse {
 
     public function sendAsJson() {
         header("Content-Type: application/json");
-        $final_data = array_merge($this->header, array("data" => $this->data));
-        $json = json_encode($final_data);
-        echo $json;
+        if (empty($this->header)) {
+            $json = json_encode($this->data);
+            echo $json;
+        } else {
+            $final_data = array_merge($this->header, array("data" => $this->data));
+            $json = json_encode($final_data);
+            echo $json;
+        }
     }
 
     public function sendAsCsv() {
         header('Content-Type: text/csv');
-        $this->sendHeaderIfNotEmpty();
+        $this->sendCommentedHeaderIfNotEmpty();
         foreach ($this->data as $record) {
             echo implode(',', $record);
             echo "\n";
         }
     }
 
-    private function sendHeaderIfNotEmpty() {
+    private function sendCommentedHeaderIfNotEmpty() {
         if (!empty($this->header)) {
             echo "#";
             echo json_encode($this->header);
