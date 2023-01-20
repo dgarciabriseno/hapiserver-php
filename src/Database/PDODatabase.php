@@ -28,6 +28,10 @@ class PDODatabase implements DataRetrievalInterface {
         $connection_string = $this->buildConnectionString();
         try {
             $this->pdo = new PDO($connection_string, $user, $pass);
+            // These settings are so that returned data is coerced into PHP types.
+            // Without this everything is a string including numbers.
+            $this->pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+            $this->pdo->setAttribute(PDO::ATTR_STRINGIFY_FETCHES, false);
         } catch (PDOException $e) {
             throw new DatabaseException("Unable to communicate with the backend database", array("info" => $e->getMessage()));
         }
@@ -80,6 +84,12 @@ class PDODatabase implements DataRetrievalInterface {
         $info = $this->FetchParameters($dataset);
         $parameters = array();
         foreach ($info as $row) {
+            // Skip any columns that are not whitelisted.
+            $whitelist = $this->GetColumnWhitelistForDataset($dataset);
+            if (!in_array($row["COLUMN_NAME"], $whitelist)) {
+                continue;
+            }
+
             array_push($parameters, $row["COLUMN_NAME"]);
         }
         return $parameters;

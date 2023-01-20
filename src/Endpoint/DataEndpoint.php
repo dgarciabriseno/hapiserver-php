@@ -28,6 +28,7 @@ class DataEndpoint extends Endpoint {
         $this->BlockRequestIfQueryExceedsRecordLimit($dataset, $start, $stop);
 
         $data = $this->QueryData($dataset, $parameters, $start, $stop);
+        $this->RunPostprocessors($dataset, $parameters, $data);
 
         $header = array();
         if ($this->getRequestParameterWithDefault("include", "") == "header") {
@@ -118,5 +119,50 @@ class DataEndpoint extends Endpoint {
     public function GetRecordCount(string $dataset, DateTimeImmutable $start, DateTimeImmutable $stop) : int {
         $db = Database::getInstance();
         return $db->QueryDataCount($dataset, $start, $stop);
+    }
+
+    /**
+     * Postprocessors are user-defined php scripts that may modify the data before sending it to the client.
+     */
+    public function RunPostprocessors(string $dataset, array $parameters, array &$data) {
+        $config = Config::getInstance();
+        $postprocessors = $config->getWithDefault($dataset . '_postprocessors', array());
+        if (!empty($postprocessors)) {
+            $indices = $this->GetParameterIndices($dataset, $parameters);
+            foreach ($postprocessors as $postprocessor) {
+                $postprocessor_class = "App\Extension\\$postprocessor";
+                $postprocessor = new $postprocessor_class($indices);
+                foreach ($data as &$record) {
+                    $postprocessor->ProcessRecord($record);
+                }
+            }
+        }
+    }
+
+    /**
+     * Returns a mapping of parameter name to index
+     * For example, for parameters a, b, and c, this will return:
+     * [ 'a' => 0, 'b' => 1, 'c' => 2]
+     * If the parameters array is empty, then the parameters used will be the full set of parameters
+     * for the dataset.
+     */
+    public function GetParameterIndices(string $dataset, array $parameters) {
+        // Parameters will be empty if the user isn't requesting any specific parameter list.
+        // In this case all parameters are returned, so we need the parameter list.
+        if (empty($parameters)) {
+            $db = Database::getInstance();
+            $all_parameters = $db->GetParametersForDataset($dataset);
+            $indices = array();
+            foreach ($all_parameters as $index => $param) {
+                $indices[$param['name']] = $index;
+            }
+            return $indices;
+        } else {
+            $indices = array();
+            foreach ($parameters as $index => $param) {
+                $indices[$param] = $index;
+            }
+            return $indices;
+        }
     }
 }
