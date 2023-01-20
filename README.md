@@ -20,18 +20,25 @@ Since this software is a database-backed design, each definitions translates thi
 - Data returned in `json` or `csv` formats.
 - Limiting requests per-dataset based on maxRequestDuration.
 - Limit requests to a maximum number of records through the configuration file.
+- Custom postprocessing through a simple interface in case you need to modify, combine, or otherwise change the data pulled from teh database before sending it to clients.
 
 ## Limitations
 - The current implementation does not support *Additional Metadata* in the info endpoint.
 - Arrays and bins as a data type are not supported
 - Fill is currently not supported, `fill: null` is returned
 - Field labels are not supported in the info endpoint yet.
-- If each of your data points is a scalar value, then this will work for you.
+- If each of your data points is a scalar value (strings count as scalars in this context), then this will work for you.
 - HAPI error codes are not returned in the HTTP status, only in the response body.
 - No HAPI landing page
-- For security reasons, only alphanumeric characters and underscore are allowed in database or column names. For extra security, the database user you use to access your database should only be granted SELECT privileges.
 
 # Installation and Setup
+Preconditions:
+- Have a database and credentials for a user with SELECT privileges.
+- For security, I recommend you have a dedicated user with only SELECT privileges since that's all that's needed to run this server.
+
+Setup Steps:
+- clone the repository
+- in the root directory, run `composer dump-autoload`
 - Setup your webserver to serve `public/index.php`
 - You need a rewrite rule so that all `/hapi/endpoints` routes get sent to index.php
 
