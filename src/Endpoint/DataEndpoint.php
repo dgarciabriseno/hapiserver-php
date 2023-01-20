@@ -98,7 +98,6 @@ class DataEndpoint extends Endpoint {
         if ($should_limit_records) {
             $recordLimit = $this->GetRecordLimit($dataset);
             $count = $this->GetRecordCount($dataset, $start, $stop);
-            var_dump($count);
             if ($count > $recordLimit) {
                 throw new UserInputException(HapiCode::TOO_MUCH_DATA, "Request would return too much data, please reduce your time range");
             }
