@@ -53,15 +53,6 @@ class DataEndpoint extends Endpoint {
         return $db->QueryData($dataset, $parameters, $start, $stop);
     }
 
-    public function GetRequestedParameters() {
-        $parameters = $this->getRequestParameterWithDefault("parameters", "");
-        if ($parameters == "") {
-            return array();
-        } else {
-            return explode(',', $parameters);
-        }
-    }
-
     public function GetDataHeader(string $dataset) {
         $info = new InfoEndpoint();
         return $info->GetDatasetInfo($dataset);

@@ -69,11 +69,27 @@ class PDODatabase implements DataRetrievalInterface {
                 "fill" => null
             );
             if ($parameter["type"] == "string") {
-                $parameter = array_merge($parameter, array("length" => $row["CHARACTER_MAXIMUM_LENGTH"]));
+                $parameter = array_merge($parameter, array("length" => intval($row["CHARACTER_MAXIMUM_LENGTH"])));
+            }
+            if ($parameter["type"] == "isotime") {
+                // 26 characters represents the max time for a date like 2022-01-01 00:00:00.123456
+                $parameter["length"] = 26;
             }
             array_push($parameters, $parameter);
         }
+        $parameters = $this->PlaceTimestampFirst($dataset, $parameters);
         return $parameters;
+    }
+
+    /**
+     * Returns the parameters array with the timestamp column as the first item in the array.
+     */
+    private function PlaceTimestampFirst(string $dataset, array $parameters) : array {
+        $table = $this->getTableForDataset($dataset);
+        $time_column = $this->getTimeColumn($table);
+        $time_parameter = array_filter($parameters, function ($param) use ($time_column) { return $param['name'] == $time_column; });
+        $other_parameters = array_filter($parameters, function ($param) use ($time_column) { return $param['name'] != $time_column; });
+        return array_merge($time_parameter, $other_parameters);
     }
 
     private function GetMetaparameterInfo(string $dataset) : array {

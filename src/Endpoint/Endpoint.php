@@ -6,6 +6,7 @@ use App\Exception\UnimplementedException;
 use App\Exception\UserInputException;
 use App\Response\HapiCode;
 use App\Util\Catalog;
+use App\Util\Config;
 use DateTimeImmutable;
 
 class Endpoint {
@@ -38,16 +39,25 @@ class Endpoint {
         return true;
     }
 
+    /**
+     * Handles backwards compatibility for HAPI, allows the user to send either "start" or "time.min" as the input.
+     */
     private function GetRawStartTime() {
         $date = $this->getRequestParameterWithDefault("start", "");
-        if ($date == "") {
+        if ($date != "") {
+            return $date;
+        } else {
+            // time.min appears as time_min in the request
             return $this->getRequestParameterWithDefault("time_min", "");
         }
     }
 
     private function GetRawStopTime() {
         $date = $this->getRequestParameterWithDefault("stop", "");
-        if ($date == "") {
+        if ($date != "") {
+            return $date;
+        } else {
+            // time.max appears as time_max in the request
             return $this->getRequestParameterWithDefault("time_max", "");
         }
     }
@@ -102,5 +112,50 @@ class Endpoint {
         if ($stop <= $start) {
             throw new UserInputException(HapiCode::ERROR_IN_TIME, "Stop date is before or equal to start date");
         }
+    }
+
+    public function GetRequestedParameters() : array {
+        $parameters = $this->getRequestParameterWithDefault("parameters", "");
+        if ($parameters == "") {
+            return array();
+        } else {
+            $parameter_list = explode(',', $parameters);
+            $parameter_list = $this->InsertTimeParameterIfMissing($parameter_list);
+            $parameter_list = $this->PlaceTimestampFirst($parameter_list);
+            return $parameter_list;
+        }
+    }
+
+    private function InsertTimeParameterIfMissing(array $parameter_list) : array {
+        $dataset = $this->GetRequestedDataset();
+        $time_parameter = $this->GetDatasetTimeParameter($dataset);
+        if (in_array($time_parameter, $parameter_list)) {
+            return $parameter_list;
+        } else {
+            array_unshift($parameter_list, $time_parameter);
+            return $parameter_list;
+        }
+    }
+
+    private function GetDatasetTimeParameter(string $dataset) : string {
+        $config = Config::getInstance();
+        $time_parameter = $config->getWithDefault($dataset . '_TimeParameter', "");
+        if ($time_parameter == "") {
+            throw new ConfigNotFoundException("TimeParameter is not set for dataset $dataset");
+        }
+        return $time_parameter;
+    }
+
+    /**
+     * $parameter_list should already have the time parameter in the list when this is called
+     */
+    private function PlaceTimestampFirst(array $parameter_list) : array {
+        $dataset = $this->GetRequestedDataset();
+        $time_parameter = $this->GetDatasetTimeParameter($dataset);
+        assert(in_array($time_parameter, $parameter_list));
+        $parameters = array_filter($parameter_list, function ($param) use ($time_parameter) {return $param != $time_parameter;});
+        // unshift will put the time parameter in the front of the list
+        array_unshift($parameters, $time_parameter);
+        return $parameters;
     }
 }

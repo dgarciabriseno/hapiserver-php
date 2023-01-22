@@ -65,7 +65,8 @@ final class DataEndpointTest extends TestCase {
         $this->assertArrayHasKey('string_data', $list);
         $this->assertArrayHasKey('timestamp', $list);
         $this->assertArrayHasKey('example_metaparameter', $list);
-        $this->assertEquals(0, $list['decimal_data']);
+        $this->assertEquals(0, $list['timestamp']);
+        $this->assertEquals(1, $list['decimal_data']);
     }
 
     public function testIndexesGivenParameters() {
@@ -78,5 +79,25 @@ final class DataEndpointTest extends TestCase {
         $this->assertEquals(0, $list['a']);
         $this->assertEquals(1, $list['b']);
         $this->assertEquals(2, $list['c']);
+    }
+
+    public function testGetRequestedParametersPutsTimestampFirst() {
+        $_GET["parameters"] = "string_data";
+        $_GET['dataset'] = 'ExampleDataset';
+        $endpoint = new DataEndpoint();
+        $list = $endpoint->GetRequestedParameters();
+        $this->assertCount(2, $list);
+        $this->assertEquals('timestamp', $list[0]);
+        $this->assertEquals('string_data', $list[1]);
+    }
+
+    public function testTimestampIsMovedToFrontOfParameterList() {
+        $_GET["parameters"] = "string_data,timestamp";
+        $_GET['dataset'] = 'ExampleDataset';
+        $endpoint = new DataEndpoint();
+        $list = $endpoint->GetRequestedParameters();
+        $this->assertCount(2, $list);
+        $this->assertEquals('timestamp', $list[0]);
+        $this->assertEquals('string_data', $list[1]);
     }
 }

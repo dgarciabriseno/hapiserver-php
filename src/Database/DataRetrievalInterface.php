@@ -7,6 +7,7 @@ use DateTimeImmutable;
 interface DataRetrievalInterface {
     /**
      * Gets the parameters allowed for the given dataset and returns them as an array of arrays
+     * The first parameter must be the record's isotime field.
      * in the form:
      * [
      *  "name" => _
@@ -26,6 +27,7 @@ interface DataRetrievalInterface {
 
     /**
      * Returns data for a dataset. Result should be a json_encodable array of arrays in list form (no key value pairs).
+     * The first element in each record must be the record's timestamp.
      */
     public function QueryData(string $dataset, array $parameters, DateTimeImmutable $start, DateTimeImmutable $stop) : array;
 

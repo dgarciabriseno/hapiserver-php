@@ -28,7 +28,7 @@ class InfoEndpoint extends Endpoint {
     }
 
     private function FilterForUserSpecifiedParameters(array $parameters) {
-        $filter = $this->getParameterList();
+        $filter = $this->GetRequestedParameters();
         if (empty($filter)) {
             return $parameters;
         } else {
