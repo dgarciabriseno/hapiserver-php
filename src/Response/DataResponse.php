@@ -40,6 +40,7 @@ class DataResponse extends HapiResponse {
         if (!empty($this->header)) {
             echo "#";
             $header = array_merge($this->header, array('format' => 'csv'));
+            $header = $this->mergeDataWithStatus($header);
             echo json_encode($header);
             echo "\n";
         }

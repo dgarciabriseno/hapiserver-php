@@ -48,7 +48,7 @@ class HapiResponse {
         return json_encode($this->getDataArray($data));
     }
 
-    private function mergeDataWithStatus(array $data) : array {
+    protected function mergeDataWithStatus(array $data) : array {
         $status = $this->getStatusArray();
         return array_merge($data, $status);
     }
