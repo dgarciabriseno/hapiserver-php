@@ -38,8 +38,22 @@ class Endpoint {
         return true;
     }
 
-    public function AssertStartTimeIsValid() {
+    private function GetRawStartTime() {
         $date = $this->getRequestParameterWithDefault("start", "");
+        if ($date == "") {
+            return $this->getRequestParameterWithDefault("time_min", "");
+        }
+    }
+
+    private function GetRawStopTime() {
+        $date = $this->getRequestParameterWithDefault("stop", "");
+        if ($date == "") {
+            return $this->getRequestParameterWithDefault("time_max", "");
+        }
+    }
+
+    public function AssertStartTimeIsValid() {
+        $date = $this->GetRawStartTime();
         if ($date == "") {
             throw new UserInputException(HapiCode::ERROR_IN_START_TIME, "Start time not provided");
         }
@@ -50,7 +64,7 @@ class Endpoint {
     }
 
     public function AssertStopTimeIsValid() {
-        $date = $this->getRequestParameterWithDefault("stop", "");
+        $date = $this->GetRawStopTime();
         if ($date == "") {
             throw new UserInputException(HapiCode::ERROR_IN_STOP_TIME, "Stop time not provided");
         }
@@ -74,13 +88,13 @@ class Endpoint {
 
     public function ValidateAndGetRequestedStartTime() : DateTimeImmutable {
         $this->AssertStartTimeIsValid();
-        $parsed = new DateTimeImmutable($_GET['start']);
+        $parsed = new DateTimeImmutable($this->GetRawStartTime());
         return $parsed;
     }
 
     public function ValidateAndGetRequestedStopTime() : DateTimeImmutable {
         $this->AssertStopTimeIsValid();
-        $parsed = new DateTimeImmutable($_GET['stop']);
+        $parsed = new DateTimeImmutable($this->GetRawStopTime());
         return $parsed;
     }
 
