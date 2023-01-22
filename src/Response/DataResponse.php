@@ -39,7 +39,8 @@ class DataResponse extends HapiResponse {
     private function sendCommentedHeaderIfNotEmpty() {
         if (!empty($this->header)) {
             echo "#";
-            echo json_encode($this->header);
+            $header = array_merge($this->header, array('format' => 'csv'));
+            echo json_encode($header);
             echo "\n";
         }
     }

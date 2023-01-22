@@ -18,7 +18,7 @@ class QuoteStringsForCSV extends Postprocessor {
     public function ProcessRecord(array &$record): void {
         if ($this->outputFormat == 'csv') {
             foreach ($record as &$entry) {
-                if (is_string($entry)) {
+                if (is_string($entry) && strpos($entry, ',') !== false) {
                     $entry = '"' . $entry . '"';
                 }
             }
