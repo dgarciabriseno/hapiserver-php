@@ -6,10 +6,11 @@ use App\Exception\UserInputException;
 use PHPUnit\Framework\TestCase;
 
 final class PDODatabaseTest extends TestCase {
-    public function testGetColumnNames() {
+    public function testGetsDatasetParameters() {
         $db = new PDODatabase("App\Database\MySQLStatements");
-        $names = $db->GetParametersForDataset("data");
-        $this->assertIsArray($names);
+        $parameters = $db->GetParametersForDataset("ExampleDataset");
+        $this->assertIsArray($parameters);
+        $this->assertCount(5, $parameters);
     }
 
     public function testGetsDatasetMetadata() {
@@ -45,6 +46,16 @@ final class PDODatabaseTest extends TestCase {
         $stop = new DateTimeImmutable("2023-01-01T00:00:00Z");
         $data = $db->QueryData("ExampleDataset", array(), $start, $stop);
         $this->assertEquals(3, count($data));
+        $this->assertCount(5, $data[0]);
+    }
+
+    public function testCanQueryMetaparametersExclusively() {
+        $db = new PDODatabase("App\Database\MySQLStatements");
+        $start = new DateTimeImmutable("2021-01-01T00:00:00Z");
+        $stop = new DateTimeImmutable("2023-01-01T00:00:00Z");
+        $data = $db->QueryData("ExampleDataset", array('example_metaparameter'), $start, $stop);
+        $this->assertEquals(3, count($data));
+        $this->assertCount(1, $data[0]);
     }
 
     public function testThrowsExceptionIfStopTimeIsBeforeStartOfDatasetTimeRange() {

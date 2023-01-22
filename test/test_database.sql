@@ -3,11 +3,12 @@ CREATE DATABASE HapiTestDatabase;
 USE HapiTestDatabase;
 
 CREATE TABLE TestDataset (
-    id INT,
+    id INT AUTO_INCREMENT,
     string_data VARCHAR(500),
     decimal_data DECIMAL(5,2),
     float_data FLOAT,
-    timestamp TIMESTAMP(3)
+    timestamp TIMESTAMP(3),
+    PRIMARY KEY (id)
 );
 
 INSERT INTO TestDataset(string_data, decimal_data, float_data, timestamp)

@@ -59,11 +59,12 @@ final class DataEndpointTest extends TestCase {
     public function testGetsParameterIndices() {
         $endpoint = new DataEndpoint();
         $list = $endpoint->GetParameterIndices('ExampleDataset', array());
-        $this->assertCount(4, $list);
+        $this->assertCount(5, $list);
         $this->assertArrayHasKey('decimal_data', $list);
         $this->assertArrayHasKey('float_data', $list);
         $this->assertArrayHasKey('string_data', $list);
         $this->assertArrayHasKey('timestamp', $list);
+        $this->assertArrayHasKey('example_metaparameter', $list);
         $this->assertEquals(0, $list['decimal_data']);
     }
 

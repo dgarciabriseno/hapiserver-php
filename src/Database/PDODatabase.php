@@ -46,9 +46,15 @@ class PDODatabase implements DataRetrievalInterface {
     }
 
     public function GetParametersForDataset(string $dataset): array {
-        $info = $this->FetchParameters($dataset);
-        $result = array();
-        foreach($info as $row) {
+        $column_parameters = $this->GetColumnParameters($dataset);
+        $metaparameters = $this->GetMetaparameterInfo($dataset);
+        return array_merge($column_parameters, $metaparameters);
+    }
+
+    private function GetColumnParameters(string $dataset) : array {
+        $columnInfo = $this->FetchDatabaseColumnsInfo($dataset);
+        $parameters = array();
+        foreach($columnInfo as $row) {
             // Skip any columns that are not whitelisted.
             $whitelist = $this->GetColumnWhitelistForDataset($dataset);
             if (!in_array($row["COLUMN_NAME"], $whitelist)) {
@@ -65,9 +71,29 @@ class PDODatabase implements DataRetrievalInterface {
             if ($parameter["type"] == "string") {
                 $parameter = array_merge($parameter, array("length" => $row["CHARACTER_MAXIMUM_LENGTH"]));
             }
-            array_push($result, $parameter);
+            array_push($parameters, $parameter);
         }
-        return $result;
+        return $parameters;
+    }
+
+    private function GetMetaparameterInfo(string $dataset) : array {
+        $config = Config::getInstance();
+        $metaparameters = $config->getWithDefault($dataset . '_metaparameters', array());
+        $parameters = array();
+        foreach ($metaparameters as $meta => $_) {
+            $param = array(
+                "name" => $meta,
+                "type" => $config->getWithDefault($dataset . '_' . $meta . '_type', 'Unspecified'),
+                "description" => $this->GetParameterDescription($dataset, $meta),
+                "units" => $this->GetParameterUnit($dataset, $meta),
+                "fill" => null
+            );
+            if ($param['type'] == "string") {
+                $param = array_merge($param, array("length" => intval($config->getWithDefault($dataset . '_' . $meta . '_maxlength', 10000))));
+            }
+            array_push($parameters, $param);
+        }
+        return $parameters;
     }
 
     public function GetColumnWhitelistForDataset(string $dataset) : array {
@@ -77,25 +103,20 @@ class PDODatabase implements DataRetrievalInterface {
 
     public function GetColumnWhitelist(string $table) : array {
         $config = Config::getInstance();
+        $whitelist = $table . '_ColumnWhitelist';
         return $config->getWithDefault($table . '_ColumnWhitelist', array());
     }
 
     protected function GetParametersAsList(string $dataset) : array {
-        $info = $this->FetchParameters($dataset);
-        $parameters = array();
-        foreach ($info as $row) {
-            // Skip any columns that are not whitelisted.
-            $whitelist = $this->GetColumnWhitelistForDataset($dataset);
-            if (!in_array($row["COLUMN_NAME"], $whitelist)) {
-                continue;
-            }
-
-            array_push($parameters, $row["COLUMN_NAME"]);
+        $parameters = $this->GetParametersForDataset($dataset);
+        $result = array();
+        foreach ($parameters as $param) {
+            array_push($result, $param['name']);
         }
-        return $parameters;
+        return $result;
     }
 
-    protected function FetchParameters(string $dataset) : array {
+    protected function FetchDatabaseColumnsInfo(string $dataset) : array {
         // For a database backed instance, the "parameters" returned for a dataset correspond to the column names.
         $table = $this->getTableForDataset($dataset);
         $pdo_statement = $this->statement_provider->GetColumnNames($this->dbname, $table);
@@ -181,7 +202,25 @@ class PDODatabase implements DataRetrievalInterface {
         }
         $table = $this->getTableForDataset($dataset);
         $time_column = $this->getTimeColumn($table);
-        $query = $this->statement_provider->QueryData($table, $time_column, $parameters, $start, $stop);
+        $config = Config::getInstance();
+
+        // Move any metaparameters from the parameter list into the metaparameter list
+        $metaparameters = $config->getWithDefault($dataset . '_metaparameters', array());
+        foreach ($metaparameters as $name => $_) {
+            // The metaparameters array starts out fully containing all metaparameters.
+            // parameters is the list of parameters requested by the user, some of which may be metaparameters.
+            // if the metaparameter is in the parameter array, then remove it and keep it in the metaparameter array.
+            // if the metaparameter is in not in the parameter array, then the user didn't request it, so remove it from metaparameters.
+            // The end result is that metaparameters should contain only metaparameters requested by the user, or it should be an empty list.
+            if (in_array($name, $parameters)) {
+                $idx = array_search($name, $parameters);
+                unset($parameters[$idx]);
+            } else {
+                unset($metaparameters[$name]);
+            }
+        }
+
+        $query = $this->statement_provider->QueryData($table, $time_column, $parameters, $metaparameters, $start, $stop);
         $result = $this->ExecuteStatementAndFetchResults($query, PDO::FETCH_NUM);
         return $result;
     }

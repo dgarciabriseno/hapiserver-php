@@ -63,14 +63,21 @@ class MySQLStatements implements StatementProvider {
         }
     }
 
-    public function QueryData(string $table, string $time_column, array $columns, DateTimeImmutable $start, DateTimeImmutable $stop): PDOStatement {
+    public function QueryData(string $table, string $time_column, array $columns, array $metacolumns, DateTimeImmutable $start, DateTimeImmutable $stop): PDOStatement {
         $this->VerifySafeDataOrThrowException($table);
         $this->VerifySafeDataOrThrowException($time_column);
         $this->VerifySafeColumnsOrThrowException($columns);
+        $metacolumn_portion = $this->GetMetacolumnSQL($metacolumns);
+        if (empty($columns)) {
+            // Remove leading comma in metacolumn portion of sql since there are no columns.
+            $metacolumn_portion = substr($metacolumn_portion, 1);
+        }
+
         $sql = sprintf("
-            SELECT %s FROM %s WHERE %s >= :start_time AND %s < :stop_time
+            SELECT %s%s FROM %s WHERE %s >= :start_time AND %s < :stop_time
         ",
             implode(',', $columns),
+            $metacolumn_portion,
             $table,
             $time_column,
             $time_column);
@@ -78,6 +85,27 @@ class MySQLStatements implements StatementProvider {
         $statement->bindValue("start_time", $start->format('Y-m-d H:i:s.v'));
         $statement->bindValue("stop_time", $stop->format('Y-m-d H:i:s.v'));
         return $statement;
+    }
+
+    /**
+     * Builds the metacolumn portion of the query which looks like this:
+     * ", CONCAT_WS('~', a, b, c) as metaparameter"
+     */
+    public function GetMetacolumnSQL(array $metacolumns) {
+        $sql = "";
+        if (!empty($metacolumns)) {
+            $sql .= ",";
+        }
+
+        foreach ($metacolumns as $name => $columns) {
+            $column_list = explode(',', $columns);
+            $this->VerifySafeColumnsOrThrowException($column_list);
+            $this->VerifySafeDataOrThrowException($name);
+            $sql .= " CONCAT_WS('~', " . implode(',', $column_list) . ") as $name,";
+        }
+
+        // remove trailing comma
+        return substr($sql, 0, -1);
     }
 
     public function QueryDataCount(string $table, string $time_column, DateTimeImmutable $start, DateTimeImmutable $stop): PDOStatement {
