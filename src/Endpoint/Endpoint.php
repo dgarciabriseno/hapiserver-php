@@ -63,7 +63,11 @@ class Endpoint {
     public function GetRequestedDataset() : string {
         $dataset = $this->getRequestParameterWithDefault("dataset", "");
         if ($dataset == "") {
-            throw new UserInputException(HapiCode::USER_ERROR, "Dataset was not provided");
+            // Support for HAPI version < 3
+            $dataset = $this->getRequestParameterWithDefault("id", "");
+            if ($dataset == "") {
+                throw new UserInputException(HapiCode::USER_ERROR, "Dataset was not provided");
+            }
         }
         return $dataset;
     }
