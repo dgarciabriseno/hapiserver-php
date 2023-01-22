@@ -18,16 +18,17 @@ class DataResponse extends HapiResponse {
         header("Content-Type: application/json");
         if (empty($this->header)) {
             $json = json_encode($this->data);
-            echo $json;
+            $this->echo($json);
         } else {
             $final_data = array_merge($this->header, array("data" => $this->data));
             $json = json_encode($final_data);
-            echo $json;
+            $this->echo($json);
         }
     }
 
     public function sendAsCsv() {
         header('Content-Type: text/csv');
+        $this->EnableCORS();
         $this->sendCommentedHeaderIfNotEmpty();
         foreach ($this->data as $record) {
             echo implode(',', $record);

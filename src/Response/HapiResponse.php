@@ -12,9 +12,22 @@ class HapiResponse {
         $this->message = $message;
     }
 
+    /**
+     * All responses must go through this echo to ensure CORS is enabled.
+     */
+    protected function echo(string $content) {
+        $this->EnableCORS();
+        echo $content;
+    }
+
+    protected function EnableCORS() {
+        header('Access-Control-Allow-Origin: *');
+        header('Access-Control-Allow-Methods: GET');
+    }
+
     protected function sendJsonToClient(string $json) {
         header("Content-Type: application/json");
-        echo $json;
+        $this->echo($json);
     }
 
     public function sendStatusToClient() {
