@@ -173,7 +173,7 @@ class PDODatabase implements DataRetrievalInterface {
         $config = Config::getInstance();
         $column = $config->getWithDefault($key, "");
         if ($column == "") {
-            throw new UnimplementedException("Config is missing the time column for the dataset: $dataset");
+            throw new UnimplementedException("Config is missing the time column for the table: $table");
         }
         return $column;
     }

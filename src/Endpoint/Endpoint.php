@@ -4,6 +4,7 @@ namespace App\Endpoint;
 
 use App\Exception\UnimplementedException;
 use App\Exception\UserInputException;
+use App\Exception\ConfigNotFoundException;
 use App\Response\HapiCode;
 use App\Util\Catalog;
 use App\Util\Config;
