@@ -34,7 +34,7 @@ class ExampleMetaparameter extends Postprocessor {
             $id = $split[0];
             // timestamp was specified second, so it'll be the second item.
             $timestamp = $split[1];
-            $record[$index] = "Database ID: $id, timestamp: $timestamp";
+            $record[$index] = "Database ID: $id - timestamp: $timestamp";
         }
     }
 }
