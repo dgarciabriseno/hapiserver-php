@@ -28,7 +28,9 @@ class DataEndpoint extends Endpoint {
         $this->BlockRequestIfQueryExceedsRecordLimit($dataset, $start, $stop);
 
         $data = $this->QueryData($dataset, $parameters, $start, $stop);
-        $this->RunPostprocessors($dataset, $parameters, $data);
+
+        $format = $this->getRequestParameterWithDefault("format", "csv");
+        $this->RunPostprocessors($format, $dataset, $parameters, $data);
 
         $header = array();
         if ($this->getRequestParameterWithDefault("include", "") == "header") {
@@ -37,7 +39,6 @@ class DataEndpoint extends Endpoint {
 
         $response = new DataResponse($data, $header);
 
-        $format = $this->getRequestParameterWithDefault("format", "csv");
         switch ($format) {
             case "csv":
                 return $response->sendAsCsv();
@@ -115,14 +116,14 @@ class DataEndpoint extends Endpoint {
     /**
      * Postprocessors are user-defined php scripts that may modify the data before sending it to the client.
      */
-    public function RunPostprocessors(string $dataset, array $parameters, array &$data) {
+    public function RunPostprocessors(string $format, string $dataset, array $parameters, array &$data) {
         $config = Config::getInstance();
         $postprocessors = $config->getWithDefault($dataset . '_postprocessors', array());
         if (!empty($postprocessors)) {
             $indices = $this->GetParameterIndices($dataset, $parameters);
             foreach ($postprocessors as $postprocessor) {
                 $postprocessor_class = "App\Extension\\$postprocessor";
-                $postprocessor = new $postprocessor_class($indices);
+                $postprocessor = new $postprocessor_class($indices, $format);
                 foreach ($data as &$record) {
                     $postprocessor->ProcessRecord($record);
                 }

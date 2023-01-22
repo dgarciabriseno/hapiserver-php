@@ -14,8 +14,11 @@ abstract class Postprocessor {
      */
     protected array $indices;
 
-    public function __construct(array $parameter_indices) {
+    protected string $outputFormat;
+
+    public function __construct(array $parameter_indices, string $format) {
         $this->indices = $parameter_indices;
+        $this->outputFormat = $format;
     }
 
     /**
