@@ -32,7 +32,7 @@ class DateToIsoFormat extends Postprocessor {
         if ($this->time_parameter != "") {
             $index = $this->indices[$this->time_parameter];
             $date = new DateTimeImmutable($record[$index]);
-            $record[$index] = $date->format("Y-m-d\TH:i:s\Z");
+            $record[$index] = $date->format("Y-m-d\TH:i:s.u\Z");
         }
     }
 }
