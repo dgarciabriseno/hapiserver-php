@@ -2,6 +2,8 @@
 
 namespace App\Extension;
 
+use App\Util\Config;
+
 /**
  * Postprocessors can be used to modify your data just-in-time before it's sent to the client.
  * You can register a postprocessor by specifying the class name in the config file.
@@ -16,9 +18,15 @@ abstract class Postprocessor {
 
     protected string $outputFormat;
 
-    public function __construct(array $parameter_indices, string $format) {
+    protected string $dataset;
+
+    protected Config $config;
+
+    public function __construct(array $parameter_indices, string $format, string $dataset) {
         $this->indices = $parameter_indices;
         $this->outputFormat = $format;
+        $this->dataset = $dataset;
+        $this->config = Config::getInstance();
     }
 
     /**
