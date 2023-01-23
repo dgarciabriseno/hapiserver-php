@@ -26,6 +26,15 @@ final class DataEndpointTest extends TestCase {
         $endpoint->VerifyStartStopIsWithinMaxRequestDuration("ExampleDataset", $start, $stop);
     }
 
+    public function testValidDurationsAreAllowedWithin1Millisecond() {
+        $_GET["start"] = '2022-01-01T00:00:00.001Z';
+        $_GET["stop"] = '2022-01-01T00:00:00.002Z';
+        $endpoint = new DataEndpoint();
+        $start = $endpoint->ValidateAndGetRequestedStartTime();
+        $stop = $endpoint->ValidateAndGetRequestedStopTime();
+        $endpoint->ValidateStartDateIsBeforeEndDate($start, $stop);
+    }
+
     public function testCanCompareDateIntervals() {
         $one_year = new DateInterval('P1Y');
         $two_years = new DateInterval('P2Y');

@@ -12,7 +12,7 @@ CREATE TABLE TestDataset (
 );
 
 INSERT INTO TestDataset(string_data, decimal_data, float_data, timestamp)
-VALUES ("I'm a string", 5.01, 1.23456, '2022-01-01 05:00:00.123'),
+VALUES ("I'm a string", 5.01, 1.23456, '2022-01-01 00:00:00.000'),
        ("This is a string", 7.01, 5.4321, '2022-01-15 10:00:00.456'),
        ("Hello, world", 1.01, 999.999, '2022-01-31 00:00:00.789');
 
