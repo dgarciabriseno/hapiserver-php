@@ -29,11 +29,11 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-php-
     
-    - name: Start MySQL
-      uses: mirromutth/mysql-action@v1.1
+    - name: Enable MySQL
+      run: sudo systemctl start mysql.service
 
     - name: Create test database with test data
-      run: sudo mysql -u root < test/test_database.sql
+      run: sudo mysql < test/test_database.sql
 
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress
