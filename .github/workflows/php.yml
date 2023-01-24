@@ -1,4 +1,4 @@
-name: PHP Composer
+name: Unit Tests
 
 on:
   push:
@@ -28,7 +28,7 @@ jobs:
         key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
         restore-keys: |
           ${{ runner.os }}-php-
-    
+
     - name: Enable MySQL
       run: sudo systemctl start mysql.service
 

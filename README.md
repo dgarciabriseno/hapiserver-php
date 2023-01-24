@@ -1,3 +1,5 @@
+![CI Badge](https://github.com/dgarciabriseno/hapiserver-php/actions/workflows/php.yml/badge.svg)
+
 # hapiserver-php
 This software is intended to provide HAPI server capabilities to a dataset stored in a MySQL database.
 (Other SQL databases may work, though will need some minor tinkering).
