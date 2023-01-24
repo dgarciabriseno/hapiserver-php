@@ -1,4 +1,10 @@
 {
+    "name": "dgarciabriseno/hapiserver-php",
+    "description": "Customizable HAPI server",
+    "license": "BSD-3-Clause",
+    "scripts": {
+        "test": "cp config.example.ini config.ini; cd test; ./run_tests.sh"
+    },
     "autoload": {
         "psr-4": {"App\\": "src/"}
     },
