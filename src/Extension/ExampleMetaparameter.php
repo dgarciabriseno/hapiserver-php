@@ -30,7 +30,7 @@ class ExampleMetaparameter extends Postprocessor {
             // ~ is the defacto separator for columns returned for metaparameters.
             // If your data contains a ~, I'm sorry. Make a PR making this separator configurable.
             $split = explode('~', $value);
-            // since id was specified first, it will be returned first.
+            // since id was specified first for example_metaparameter in config.ini, it will be returned first.
             $id = $split[0];
             // timestamp was specified second, so it'll be the second item.
             $timestamp = $split[1];
