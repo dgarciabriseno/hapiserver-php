@@ -32,6 +32,7 @@ class PDODatabase implements DataRetrievalInterface {
             // Without this everything is a string including numbers.
             $this->pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
             $this->pdo->setAttribute(PDO::ATTR_STRINGIFY_FETCHES, false);
+            $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $e) {
             throw new DatabaseException("Unable to communicate with the backend database", array("info" => $e->getMessage()));
         }
@@ -52,11 +53,11 @@ class PDODatabase implements DataRetrievalInterface {
     }
 
     private function GetColumnParameters(string $dataset) : array {
+        $whitelist = $this->GetColumnWhitelistForDataset($dataset);
         $columnInfo = $this->FetchDatabaseColumnsInfo($dataset);
         $parameters = array();
         foreach($columnInfo as $row) {
             // Skip any columns that are not whitelisted.
-            $whitelist = $this->GetColumnWhitelistForDataset($dataset);
             if (!in_array($row["COLUMN_NAME"], $whitelist)) {
                 continue;
             }
@@ -77,8 +78,18 @@ class PDODatabase implements DataRetrievalInterface {
             }
             array_push($parameters, $parameter);
         }
+        $parameters = $this->SortParametersByWhitelist($whitelist, $parameters);
         $parameters = $this->PlaceTimestampFirst($dataset, $parameters);
         return $parameters;
+    }
+
+    private function SortParametersByWhitelist(array $whitelist, array $parameters) : array {
+        $sorted = array();
+        foreach ($whitelist as $column) {
+            $parameter = array_filter($parameters, function ($param) use ($column) { return $param['name'] == $column; });
+            array_push($sorted, $parameter[array_key_first($parameter)]);
+        }
+        return $sorted;
     }
 
     /**
