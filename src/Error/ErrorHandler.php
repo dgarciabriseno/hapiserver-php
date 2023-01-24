@@ -8,6 +8,7 @@ use App\Exception\ConfigNotFoundException;
 use App\Exception\DatabaseException;
 use App\Exception\UserInputException;
 use Exception;
+use Throwable;
 
 class ErrorHandler {
     protected static string $logger = ErrorLogger::class;
@@ -24,7 +25,7 @@ class ErrorHandler {
         return $response;
     }
 
-    public static function HandleInternalError(Exception $e) {
+    public static function HandleInternalError(Throwable $e) {
         self::$logger::LogException($e);
         http_response_code(500);
         $response = new HapiResponse(1500, "Internal error");

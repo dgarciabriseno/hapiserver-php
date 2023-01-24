@@ -8,7 +8,7 @@ use App\Error\ErrorHandler;
 try {
     $path = get_url_path();
     Router::route($path);
-} catch (Exception $e) {
+} catch (Throwable $e) {
     ErrorHandler::HandleInternalError($e);
 }
 
