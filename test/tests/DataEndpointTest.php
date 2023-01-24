@@ -68,7 +68,6 @@ final class DataEndpointTest extends TestCase {
     public function testGetsParameterIndices() {
         $endpoint = new DataEndpoint();
         $list = $endpoint->GetParameterIndices('ExampleDataset', array());
-        var_dump($list);
         $this->assertCount(5, $list);
         $this->assertArrayHasKey('decimal_data', $list);
         $this->assertArrayHasKey('float_data', $list);
