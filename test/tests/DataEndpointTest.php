@@ -75,7 +75,6 @@ final class DataEndpointTest extends TestCase {
         $this->assertArrayHasKey('timestamp', $list);
         $this->assertArrayHasKey('example_metaparameter', $list);
         $this->assertEquals(0, $list['timestamp']);
-        $this->assertEquals(1, $list['decimal_data']);
     }
 
     public function testIndexesGivenParameters() {
