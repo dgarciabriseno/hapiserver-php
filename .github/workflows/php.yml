@@ -33,7 +33,7 @@ jobs:
       run: sudo systemctl start mysql.service
 
     - name: Create test database with test data
-      run: sudo mysql < test/test_database.sql
+      run: sudo mysql -u root -proot < test/test_database.sql
 
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress
