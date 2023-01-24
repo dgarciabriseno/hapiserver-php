@@ -15,7 +15,7 @@ class Catalog {
         return self::formatCatalogForHapiOutput($catalog);
     }
 
-    public static function hasDataset(string $dataset) {
+    public static function hasDataset(string $dataset) : bool {
         $config = Config::getInstance();
         $catalog = $config->getWithDefault("catalog", []);
         return array_key_exists($dataset, $catalog);

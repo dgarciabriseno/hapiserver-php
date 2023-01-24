@@ -9,7 +9,7 @@ final class InfoEndpointTest extends TestCase {
         $_GET["dataset"] = "ExampleDataset";
         $info = new InfoEndpoint();
         $dataset = $info->GetRequestedDataset();
-        $this->assertEquals("ExampleDataset", $dataset);
+        $this->assertEquals("ExampleDataset", $dataset->GetName());
     }
 
     public function testGetsDatasetInfo() {

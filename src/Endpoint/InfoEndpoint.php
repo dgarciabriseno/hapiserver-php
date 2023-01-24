@@ -18,11 +18,9 @@ class InfoEndpoint extends Endpoint {
 
     public function GetDatasetInfo() {
         $dataset = $this->GetRequestedDataset();
-        $db = Database::getInstance();
-
-        $parameters = $db->GetParametersForDataset($dataset);
+        $parameters = $dataset->GetParameters();
         $filtered_parameters = $this->FilterForUserSpecifiedParameters($parameters);
-        $metadata = $db->GetDatasetMetadata($dataset);
+        $metadata = $dataset->GetMetadata();
 
         return array_merge($metadata, array("parameters" => $filtered_parameters));
     }

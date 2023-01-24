@@ -8,6 +8,7 @@ use App\Exception\ConfigNotFoundException;
 use App\Response\HapiCode;
 use App\Util\Catalog;
 use App\Util\Config;
+use App\Util\Dataset;
 use DateTimeImmutable;
 
 class Endpoint {
@@ -27,8 +28,8 @@ class Endpoint {
 
     public function AssertRequestedDatasetIsValid() {
         $dataset = $this->GetRequestedDataset();
-        if (!Catalog::hasDataset($dataset)) {
-            throw new UserInputException(HapiCode::UNKNOWN_DATASET, "$dataset is not part of this server");
+        if (!$dataset->IsInCatalog()) {
+            throw new UserInputException(HapiCode::UNKNOWN_DATASET, $dataset->GetName() . " is not part of this server");
         }
     }
 
@@ -85,7 +86,7 @@ class Endpoint {
         }
     }
 
-    public function GetRequestedDataset() : string {
+    public function GetRequestedDataset() : Dataset {
         $dataset = $this->getRequestParameterWithDefault("dataset", "");
         if ($dataset == "") {
             // Support for HAPI version < 3
@@ -94,7 +95,7 @@ class Endpoint {
                 throw new UserInputException(HapiCode::USER_ERROR, "Dataset was not provided");
             }
         }
-        return $dataset;
+        return new Dataset($dataset);
     }
 
     public function ValidateAndGetRequestedStartTime() : DateTimeImmutable {
@@ -129,7 +130,7 @@ class Endpoint {
 
     private function InsertTimeParameterIfMissing(array $parameter_list) : array {
         $dataset = $this->GetRequestedDataset();
-        $time_parameter = $this->GetDatasetTimeParameter($dataset);
+        $time_parameter = $dataset->GetTimeParameter();
         if (in_array($time_parameter, $parameter_list)) {
             return $parameter_list;
         } else {
@@ -138,21 +139,12 @@ class Endpoint {
         }
     }
 
-    private function GetDatasetTimeParameter(string $dataset) : string {
-        $config = Config::getInstance();
-        $time_parameter = $config->getWithDefault($dataset . '_TimeParameter', "");
-        if ($time_parameter == "") {
-            throw new ConfigNotFoundException("TimeParameter is not set for dataset $dataset");
-        }
-        return $time_parameter;
-    }
-
     /**
      * $parameter_list should already have the time parameter in the list when this is called
      */
     private function PlaceTimestampFirst(array $parameter_list) : array {
         $dataset = $this->GetRequestedDataset();
-        $time_parameter = $this->GetDatasetTimeParameter($dataset);
+        $time_parameter = $dataset->GetTimeParameter();
         assert(in_array($time_parameter, $parameter_list));
         $parameters = array_filter($parameter_list, function ($param) use ($time_parameter) {return $param != $time_parameter;});
         // unshift will put the time parameter in the front of the list

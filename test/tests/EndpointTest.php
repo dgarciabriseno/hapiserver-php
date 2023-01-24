@@ -93,13 +93,13 @@ final class EndpointTest extends TestCase {
     public function testGetRequestedDataset() {
         $_GET["dataset"] = "This is a test";
         $endpoint = new Endpoint();
-        $this->assertEquals("This is a test", $endpoint->GetRequestedDataset());
+        $this->assertEquals("This is a test", $endpoint->GetRequestedDataset()->GetName());
     }
 
     public function testGetRequestedDatasetWithIdParameter() {
         $_GET["id"] = "This is a test";
         $endpoint = new Endpoint();
-        $this->assertEquals("This is a test", $endpoint->GetRequestedDataset());
+        $this->assertEquals("This is a test", $endpoint->GetRequestedDataset()->GetName());
     }
 
     public function testThrowsExceptionIfDatasetIsNotGiven() {
