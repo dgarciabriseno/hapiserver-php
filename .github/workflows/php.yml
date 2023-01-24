@@ -28,21 +28,9 @@ jobs:
         key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
         restore-keys: |
           ${{ runner.os }}-php-
-    
-    - name: Setup MySQL
-      uses: mirromutth/mysql-action@v1.1
-      with:
-        # MYSQL_ROOT_PASSWORD - root superuser password
-        mysql root password: password
-        # MYSQL_DATABASE - name for the default database that is created
-        mysql database: HapiTestDatabase
-        # MYSQL_USER - create the specified user with superuser power for created database
-        mysql user: HapiTestUser
-        # MYSQL_PASSWORD - specified superuser password which user is power for created database
-        mysql password: password
-        
+
     - name: Create test database with test data
-      run: mysql -u $MYSQL_USER -p $MYSQL_PASSWORD < test/test_database.sql
+      run: mysql -u root < test/test_database.sql
 
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress
