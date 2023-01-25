@@ -3,6 +3,7 @@
 namespace App\Extension;
 
 use App\Util\Config;
+use App\Util\Dataset;
 
 /**
  * Postprocessors can be used to modify your data just-in-time before it's sent to the client.
@@ -18,11 +19,11 @@ abstract class Postprocessor {
 
     protected string $outputFormat;
 
-    protected string $dataset;
+    protected Dataset $dataset;
 
     protected Config $config;
 
-    public function __construct(array $parameter_indices, string $format, string $dataset) {
+    public function __construct(array $parameter_indices, string $format, Dataset $dataset) {
         $this->indices = $parameter_indices;
         $this->outputFormat = $format;
         $this->dataset = $dataset;

@@ -123,7 +123,7 @@ class DataEndpoint extends Endpoint {
             $indices = $this->GetParameterIndices($dataset, $parameters);
             foreach ($postprocessors as $postprocessor) {
                 $postprocessor_class = "App\Extension\\$postprocessor";
-                $postprocessor = new $postprocessor_class($indices, $format, $dataset);
+                $postprocessor = new $postprocessor_class($indices, $format, $set);
                 foreach ($data as &$record) {
                     $postprocessor->ProcessRecord($record);
                 }

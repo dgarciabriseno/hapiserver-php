@@ -3,6 +3,7 @@
 namespace App\Extension;
 
 use App\Util\Config;
+use App\Util\Dataset;
 use DateTimeImmutable;
 
 /**
@@ -23,9 +24,9 @@ class DateToIsoFormat extends Postprocessor {
 
     private string $time_parameter;
 
-    public function __construct(array $parameter_indices, string $format, string $dataset) {
+    public function __construct(array $parameter_indices, string $format, Dataset $dataset) {
         parent::__construct($parameter_indices, $format, $dataset);
-        $this->time_parameter = $this->config->getWithDefault($dataset . '_TimeParameter', "");
+        $this->time_parameter = $dataset->GetTimeParameter();
     }
 
     public function ProcessRecord(array &$record): void {

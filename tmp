@@ -1,0 +1,318 @@
+select CONCAT('catalog[', REPLACE(REPLACE(REPLACE(name, ' ', '_'), '-', '_'), '/', '_'), ']=', coalesce(description, name)) as catalog, CONCAT('subsets[', REPLACE(REPLACE(REPLACE(name, ' ', '_'), '-', '_'), '/', '_'), ']=AllImages,sourceId,', id) as subsets from datasources;
+catalog[EIT_171]=SOHO EIT 171
+subsets[EIT_171]=AllImages,sourceId,0
+catalog[EIT_195]=SOHO EIT 195
+subsets[EIT_195]=AllImages,sourceId,1
+catalog[EIT_284]=SOHO EIT 284
+subsets[EIT_284]=AllImages,sourceId,2
+catalog[EIT_304]=SOHO EIT 304
+subsets[EIT_304]=AllImages,sourceId,3
+catalog[LASCO_C2]=SOHO LASCO C2
+subsets[LASCO_C2]=AllImages,sourceId,4
+catalog[LASCO_C3]=SOHO LASCO C3
+subsets[LASCO_C3]=AllImages,sourceId,5
+catalog[MDI_Mag]=SOHO MDI Mag
+subsets[MDI_Mag]=AllImages,sourceId,6
+catalog[MDI_Int]=SOHO MDI Int
+subsets[MDI_Int]=AllImages,sourceId,7
+catalog[AIA_94]=SDO AIA 94
+subsets[AIA_94]=AllImages,sourceId,8
+catalog[AIA_131]=SDO AIA 131
+subsets[AIA_131]=AllImages,sourceId,9
+catalog[AIA_171]=SDO AIA 171
+subsets[AIA_171]=AllImages,sourceId,10
+catalog[AIA_193]=SDO AIA 193
+subsets[AIA_193]=AllImages,sourceId,11
+catalog[AIA_211]=SDO AIA 211
+subsets[AIA_211]=AllImages,sourceId,12
+catalog[AIA_304]=SDO AIA 304
+subsets[AIA_304]=AllImages,sourceId,13
+catalog[AIA_335]=SDO AIA 335
+subsets[AIA_335]=AllImages,sourceId,14
+catalog[AIA_1600]=SDO AIA 1600
+subsets[AIA_1600]=AllImages,sourceId,15
+catalog[AIA_1700]=SDO AIA 1700
+subsets[AIA_1700]=AllImages,sourceId,16
+catalog[AIA_4500]=SDO AIA 4500
+subsets[AIA_4500]=AllImages,sourceId,17
+catalog[HMI_Int]=SDO HMI Int
+subsets[HMI_Int]=AllImages,sourceId,18
+catalog[HMI_Mag]=SDO HMI Mag
+subsets[HMI_Mag]=AllImages,sourceId,19
+catalog[EUVI_A_171]=STEREO A EUVI 171
+subsets[EUVI_A_171]=AllImages,sourceId,20
+catalog[EUVI_A_195]=STEREO A EUVI 195
+subsets[EUVI_A_195]=AllImages,sourceId,21
+catalog[EUVI_A_284]=STEREO A EUVI 284
+subsets[EUVI_A_284]=AllImages,sourceId,22
+catalog[EUVI_A_304]=STEREO A EUVI 304
+subsets[EUVI_A_304]=AllImages,sourceId,23
+catalog[EUVI_B_171]=STEREO B EUVI 171
+subsets[EUVI_B_171]=AllImages,sourceId,24
+catalog[EUVI_B_195]=STEREO B EUVI 195
+subsets[EUVI_B_195]=AllImages,sourceId,25
+catalog[EUVI_B_284]=STEREO B EUVI 284
+subsets[EUVI_B_284]=AllImages,sourceId,26
+catalog[EUVI_B_304]=STEREO B EUVI 304
+subsets[EUVI_B_304]=AllImages,sourceId,27
+catalog[COR1_A]=STEREO A COR1
+subsets[COR1_A]=AllImages,sourceId,28
+catalog[COR2_A]=STEREO A COR2
+subsets[COR2_A]=AllImages,sourceId,29
+catalog[COR1_B]=STEREO B COR1
+subsets[COR1_B]=AllImages,sourceId,30
+catalog[COR2_B]=STEREO B COR2
+subsets[COR2_B]=AllImages,sourceId,31
+catalog[SWAP_174]=PROBA-2 SWAP 174
+subsets[SWAP_174]=AllImages,sourceId,32
+catalog[SXT_AlMgMn]=Yohkoh SXT AlMgMn
+subsets[SXT_AlMgMn]=AllImages,sourceId,33
+catalog[SXT_thin_Al]=Yohkoh SXT thin-Al
+subsets[SXT_thin_Al]=AllImages,sourceId,34
+catalog[SXT_white_light]=Yohkoh SXT white-light
+subsets[SXT_white_light]=AllImages,sourceId,35
+catalog[XRT_Al_med_Al_mesh]=XRT Al_med/Al_mesh
+subsets[XRT_Al_med_Al_mesh]=AllImages,sourceId,38
+catalog[XRT_Al_med_Al_thick]=XRT Al_med/Al_thick
+subsets[XRT_Al_med_Al_thick]=AllImages,sourceId,39
+catalog[XRT_Al_med_Be_thick]=XRT Al_med/Be_thick
+subsets[XRT_Al_med_Be_thick]=AllImages,sourceId,40
+catalog[XRT_Al_med_Gband]=XRT Al_med/Gband
+subsets[XRT_Al_med_Gband]=AllImages,sourceId,41
+catalog[XRT_Al_med_Open]=XRT Al_med/Open
+subsets[XRT_Al_med_Open]=AllImages,sourceId,42
+catalog[XRT_Al_med_Ti_poly]=XRT Al_med/Ti_poly
+subsets[XRT_Al_med_Ti_poly]=AllImages,sourceId,43
+catalog[XRT_Al_poly_Al_mesh]=XRT Al_poly/Al_mesh
+subsets[XRT_Al_poly_Al_mesh]=AllImages,sourceId,44
+catalog[XRT_Al_poly_Al_thick]=XRT Al_poly/Al_thick
+subsets[XRT_Al_poly_Al_thick]=AllImages,sourceId,45
+catalog[XRT_Al_poly_Be_thick]=XRT Al_poly/Be_thick
+subsets[XRT_Al_poly_Be_thick]=AllImages,sourceId,46
+catalog[XRT_Al_poly_Gband]=XRT Al_poly/Gband
+subsets[XRT_Al_poly_Gband]=AllImages,sourceId,47
+catalog[XRT_Al_poly_Open]=XRT Al_poly/Open
+subsets[XRT_Al_poly_Open]=AllImages,sourceId,48
+catalog[XRT_Al_poly_Ti_poly]=XRT Al_poly/Ti_poly
+subsets[XRT_Al_poly_Ti_poly]=AllImages,sourceId,49
+catalog[XRT_Be_med_Al_mesh]=XRT Be_med/Al_mesh
+subsets[XRT_Be_med_Al_mesh]=AllImages,sourceId,50
+catalog[XRT_Be_med_Al_thick]=XRT Be_med/Al_thick
+subsets[XRT_Be_med_Al_thick]=AllImages,sourceId,51
+catalog[XRT_Be_med_Be_thick]=XRT Be_med/Be_thick
+subsets[XRT_Be_med_Be_thick]=AllImages,sourceId,52
+catalog[XRT_Be_med_Gband]=XRT Be_med/Gband
+subsets[XRT_Be_med_Gband]=AllImages,sourceId,53
+catalog[XRT_Be_med_Open]=XRT Be_med/Open
+subsets[XRT_Be_med_Open]=AllImages,sourceId,54
+catalog[XRT_Be_med_Ti_poly]=XRT Be_med/Ti_poly
+subsets[XRT_Be_med_Ti_poly]=AllImages,sourceId,55
+catalog[XRT_Be_thin_Al_mesh]=XRT Be_thin/Al_mesh
+subsets[XRT_Be_thin_Al_mesh]=AllImages,sourceId,56
+catalog[XRT_Be_thin_Al_thick]=XRT Be_thin/Al_thick
+subsets[XRT_Be_thin_Al_thick]=AllImages,sourceId,57
+catalog[XRT_Be_thin_Be_thick]=XRT Be_thin/Be_thick
+subsets[XRT_Be_thin_Be_thick]=AllImages,sourceId,58
+catalog[XRT_Be_thin_Gband]=XRT Be_thin/Gband
+subsets[XRT_Be_thin_Gband]=AllImages,sourceId,59
+catalog[XRT_Be_thin_Open]=XRT Be_thin/Open
+subsets[XRT_Be_thin_Open]=AllImages,sourceId,60
+catalog[XRT_Be_thin_Ti_poly]=XRT Be_thin/Ti_poly
+subsets[XRT_Be_thin_Ti_poly]=AllImages,sourceId,61
+catalog[XRT_C_poly_Al_mesh]=XRT C_poly/Al_mesh
+subsets[XRT_C_poly_Al_mesh]=AllImages,sourceId,62
+catalog[XRT_C_poly_Al_thick]=XRT C_poly/Al_thick
+subsets[XRT_C_poly_Al_thick]=AllImages,sourceId,63
+catalog[XRT_C_poly_Be_thick]=XRT C_poly/Be_thick
+subsets[XRT_C_poly_Be_thick]=AllImages,sourceId,64
+catalog[XRT_C_poly_Gband]=XRT C_poly/Gband
+subsets[XRT_C_poly_Gband]=AllImages,sourceId,65
+catalog[XRT_C_poly_Open]=XRT C_poly/Open
+subsets[XRT_C_poly_Open]=AllImages,sourceId,66
+catalog[XRT_C_poly_Ti_poly]=XRT C_poly/Ti_poly
+subsets[XRT_C_poly_Ti_poly]=AllImages,sourceId,67
+catalog[XRT_Mispositioned_Mispositioned]=XRT Mispositioned/Mispositioned
+subsets[XRT_Mispositioned_Mispositioned]=AllImages,sourceId,68
+catalog[XRT_Open_Al_mesh]=XRT Open/Al_mesh
+subsets[XRT_Open_Al_mesh]=AllImages,sourceId,69
+catalog[XRT_Open_Al_thick]=XRT Open/Al_thick
+subsets[XRT_Open_Al_thick]=AllImages,sourceId,70
+catalog[XRT_Open_Be_thick]=XRT Open/Be_thick
+subsets[XRT_Open_Be_thick]=AllImages,sourceId,71
+catalog[XRT_Open_Gband]=XRT Open/Gband
+subsets[XRT_Open_Gband]=AllImages,sourceId,72
+catalog[XRT_Open_Open]=XRT Open/Open
+subsets[XRT_Open_Open]=AllImages,sourceId,73
+catalog[XRT_Open_Ti_poly]=XRT Open/Ti_poly
+subsets[XRT_Open_Ti_poly]=AllImages,sourceId,74
+catalog[TRACE_171]=TRACE 171
+subsets[TRACE_171]=AllImages,sourceId,75
+catalog[TRACE_195]=TRACE 195
+subsets[TRACE_195]=AllImages,sourceId,76
+catalog[TRACE_284]=TRACE 284
+subsets[TRACE_284]=AllImages,sourceId,77
+catalog[TRACE_1216]=TRACE 1216
+subsets[TRACE_1216]=AllImages,sourceId,78
+catalog[TRACE_1550]=TRACE 1550
+subsets[TRACE_1550]=AllImages,sourceId,79
+catalog[TRACE_1600]=TRACE 1600
+subsets[TRACE_1600]=AllImages,sourceId,80
+catalog[TRACE_1700]=TRACE 1700
+subsets[TRACE_1700]=AllImages,sourceId,81
+catalog[TRACE_white_light]=TRACE white-light
+subsets[TRACE_white_light]=AllImages,sourceId,82
+catalog[COSMO_KCor]=COSMO KCor
+subsets[COSMO_KCor]=AllImages,sourceId,83
+catalog[EUI_FSI_174]=Solar Orbiter EUI FSI 174
+subsets[EUI_FSI_174]=AllImages,sourceId,84
+catalog[EUI_FSI_304]=Solar Orbiter EUI FSI 304
+subsets[EUI_FSI_304]=AllImages,sourceId,85
+catalog[EUI_HRI_174]=Solar Orbiter EUI HRI 174
+subsets[EUI_HRI_174]=AllImages,sourceId,86
+catalog[EUI_HRI_1216]=Solar Orbiter EUI HRI 1216
+subsets[EUI_HRI_1216]=AllImages,sourceId,87
+catalog[GOES_R_SUVI_94]=GOES-R SUVI 94
+subsets[GOES_R_SUVI_94]=AllImages,sourceId,88
+catalog[GOES_R_SUVI_131]=GOES-R SUVI 131
+subsets[GOES_R_SUVI_131]=AllImages,sourceId,89
+catalog[GOES_R_SUVI_171]=GOES-R SUVI 171
+subsets[GOES_R_SUVI_171]=AllImages,sourceId,90
+catalog[GOES_R_SUVI_195]=GOES-R SUVI 195
+subsets[GOES_R_SUVI_195]=AllImages,sourceId,91
+catalog[GOES_R_SUVI_284]=GOES-R SUVI 284
+subsets[GOES_R_SUVI_284]=AllImages,sourceId,92
+catalog[GOES_R_SUVI_304]=GOES-R SUVI 304
+subsets[GOES_R_SUVI_304]=AllImages,sourceId,93
+catalog[XRT_Any_Any]=XRT Any/Any
+subsets[XRT_Any_Any]=AllImages,sourceId,10001
+catalog[XRT_Any_Al_mesh]=XRT Any/Al_mesh
+subsets[XRT_Any_Al_mesh]=AllImages,sourceId,10002
+catalog[XRT_Any_Al_thick]=XRT Any/Al_thick
+subsets[XRT_Any_Al_thick]=AllImages,sourceId,10003
+catalog[XRT_Any_Be_thick]=XRT Any/Be_thick
+subsets[XRT_Any_Be_thick]=AllImages,sourceId,10004
+catalog[XRT_Any_Gband]=XRT Any/Gband
+subsets[XRT_Any_Gband]=AllImages,sourceId,10005
+catalog[XRT_Any_Open]=XRT Any/Open
+subsets[XRT_Any_Open]=AllImages,sourceId,10006
+catalog[XRT_Any_Ti_poly]=XRT Any/Ti_poly
+subsets[XRT_Any_Ti_poly]=AllImages,sourceId,10007
+catalog[XRT_Al_med_Any]=XRT Al_med/Any
+subsets[XRT_Al_med_Any]=AllImages,sourceId,10008
+catalog[XRT_Al_poly_Any]=XRT Al_poly/Any
+subsets[XRT_Al_poly_Any]=AllImages,sourceId,10009
+catalog[XRT_Be_med_Any]=XRT Be_med/Any
+subsets[XRT_Be_med_Any]=AllImages,sourceId,10010
+catalog[XRT_Be_thin_Any]=XRT Be_thin/Any
+subsets[XRT_Be_thin_Any]=AllImages,sourceId,10011
+catalog[XRT_C_poly_Any]=XRT C_poly/Any
+subsets[XRT_C_poly_Any]=AllImages,sourceId,10012
+catalog[XRT_Open_Any]=XRT Open/Any
+subsets[XRT_Open_Any]=AllImages,sourceId,10013
+
+
+[EIT_171]
+[EIT_195]
+[EIT_284]
+[EIT_304]
+[LASCO_C2]
+[LASCO_C3]
+[MDI_Mag]
+[MDI_Int]
+[AIA_94]
+[AIA_131]
+[AIA_171]
+[AIA_193]
+[AIA_211]
+[AIA_304]
+[AIA_335]
+[AIA_1600]
+[AIA_1700]
+[AIA_4500]
+[HMI_Int]
+[HMI_Mag]
+[EUVI_A_171]
+[EUVI_A_195]
+[EUVI_A_284]
+[EUVI_A_304]
+[EUVI_B_171]
+[EUVI_B_195]
+[EUVI_B_284]
+[EUVI_B_304]
+[COR1_A]
+[COR2_A]
+[COR1_B]
+[COR2_B]
+[SWAP_174]
+[SXT_AlMgMn]
+[SXT_thin_Al]
+[SXT_white_light]
+[XRT_Al_med_Al_mesh]
+[XRT_Al_med_Al_thick]
+[XRT_Al_med_Be_thick]
+[XRT_Al_med_Gband]
+[XRT_Al_med_Open]
+[XRT_Al_med_Ti_poly]
+[XRT_Al_poly_Al_mesh]
+[XRT_Al_poly_Al_thick]
+[XRT_Al_poly_Be_thick]
+[XRT_Al_poly_Gband]
+[XRT_Al_poly_Open]
+[XRT_Al_poly_Ti_poly]
+[XRT_Be_med_Al_mesh]
+[XRT_Be_med_Al_thick]
+[XRT_Be_med_Be_thick]
+[XRT_Be_med_Gband]
+[XRT_Be_med_Open]
+[XRT_Be_med_Ti_poly]
+[XRT_Be_thin_Al_mesh]
+[XRT_Be_thin_Al_thick]
+[XRT_Be_thin_Be_thick]
+[XRT_Be_thin_Gband]
+[XRT_Be_thin_Open]
+[XRT_Be_thin_Ti_poly]
+[XRT_C_poly_Al_mesh]
+[XRT_C_poly_Al_thick]
+[XRT_C_poly_Be_thick]
+[XRT_C_poly_Gband]
+[XRT_C_poly_Open]
+[XRT_C_poly_Ti_poly]
+[XRT_Mispositioned_Mispositioned]
+[XRT_Open_Al_mesh]
+[XRT_Open_Al_thick]
+[XRT_Open_Be_thick]
+[XRT_Open_Gband]
+[XRT_Open_Open]
+[XRT_Open_Ti_poly]
+[TRACE_171]
+[TRACE_195]
+[TRACE_284]
+[TRACE_1216]
+[TRACE_1550]
+[TRACE_1600]
+[TRACE_1700]
+[TRACE_white_light]
+[COSMO_KCor]
+[EUI_FSI_174]
+[EUI_FSI_304]
+[EUI_HRI_174]
+[EUI_HRI_1216]
+[GOES_R_SUVI_94]
+[GOES_R_SUVI_131]
+[GOES_R_SUVI_171]
+[GOES_R_SUVI_195]
+[GOES_R_SUVI_284]
+[GOES_R_SUVI_304]
+[XRT_Any_Any]
+[XRT_Any_Al_mesh]
+[XRT_Any_Al_thick]
+[XRT_Any_Be_thick]
+[XRT_Any_Gband]
+[XRT_Any_Open]
+[XRT_Any_Ti_poly]
+[XRT_Al_med_Any]
+[XRT_Al_poly_Any]
+[XRT_Be_med_Any]
+[XRT_Be_thin_Any]
+[XRT_C_poly_Any]
+[XRT_Open_Any]

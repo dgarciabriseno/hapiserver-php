@@ -200,6 +200,9 @@ class PDODatabase implements DataRetrievalInterface {
         $this->ApplySubsetFilter($dataset);
         $statement = $this->statement_provider->GetStartDate($table, $column);
         $result = $this->ExecuteStatementAndFetchResults($statement);
+        if ($result[0]["StartDate"] == NULL) {
+            return "Unavailable";
+        }
         return DateUtils::SQLDateToIsoDate($result[0]["StartDate"]);
     }
 
@@ -219,6 +222,9 @@ class PDODatabase implements DataRetrievalInterface {
         $this->ApplySubsetFilter($dataset);
         $statement = $this->statement_provider->GetStopDate($table, $column);
         $result = $this->ExecuteStatementAndFetchResults($statement);
+        if ($result[0]["StopDate"] == NULL) {
+            return "Unavailable";
+        }
         return DateUtils::SQLDateToIsoDate($result[0]["StopDate"]);
     }
 
