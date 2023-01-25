@@ -7,14 +7,17 @@ use App\Exception\UnimplementedException;
 use App\Exception\UserInputException;
 use App\Response\HapiCode;
 use App\Util\Config;
-use App\Util\DatasetInfo;
+use App\Util\Dataset;
 use App\Util\DatasetInfoReader;
 use App\Util\DateUtils;
 use App\Util\HapiType;
+use App\Util\SubsetDataset;
+use App\Util\SubsetInfo;
 use DateTimeImmutable;
 use PDO;
 use PDOException;
 use PDOStatement;
+use ValueError;
 
 class PDODatabase implements DataRetrievalInterface {
     protected PDO $pdo;
@@ -174,6 +177,7 @@ class PDODatabase implements DataRetrievalInterface {
     public function GetStartDate(string $dataset) : string {
         $table = $this->getTableForDataset($dataset);
         $column = $this->getTimeColumn($table);
+        $this->ApplySubsetFilter($dataset);
         $statement = $this->statement_provider->GetStartDate($table, $column);
         $result = $this->ExecuteStatementAndFetchResults($statement);
         return DateUtils::SQLDateToIsoDate($result[0]["StartDate"]);
@@ -192,16 +196,19 @@ class PDODatabase implements DataRetrievalInterface {
     public function GetStopDate(string $dataset) : string {
         $table = $this->getTableForDataset($dataset);
         $column = $this->getTimeColumn($table);
+        $this->ApplySubsetFilter($dataset);
         $statement = $this->statement_provider->GetStopDate($table, $column);
         $result = $this->ExecuteStatementAndFetchResults($statement);
         return DateUtils::SQLDateToIsoDate($result[0]["StopDate"]);
     }
 
-    protected function getTableForDataset($dataset) : string {
+    protected function getTableForDataset(string $dataset_name) : string {
+        $dataset = Dataset::fromName($dataset_name);
+        $parent_name = $dataset->GetParentDataset()->GetName();
         $config = Config::getInstance();
         $mapping = $config->getWithDefault("catalog_id_to_db_table", array());
-        if (array_key_exists($dataset, $mapping)) {
-            return $mapping[$dataset];
+        if (array_key_exists($parent_name, $mapping)) {
+            return $mapping[$parent_name];
         } else {
             return $dataset;
         }
@@ -215,23 +222,27 @@ class PDODatabase implements DataRetrievalInterface {
         return array_merge($metadata, array("startDate" => $startDate, "stopDate" => $endDate));
     }
 
-    public function QueryData(string $dataset, array $parameters, DateTimeImmutable $start, DateTimeImmutable $stop): array {
-        $this->ValidateDatasetDates($dataset, $start, $stop);
+    private function GetValidQueryParameters(string $dataset, array $parameters) : array {
         if (empty($parameters)) {
-            $parameters = $this->GetParametersAsList($dataset);
+            return $this->GetParametersAsList($dataset);
         } else {
             $dataset_parameters = $this->GetParametersAsList($dataset);
+            // Make sure all requested parameters are part of the dataset.
             foreach ($parameters as $requested_param) {
                 if (!in_array($requested_param, $dataset_parameters)) {
                     throw new UserInputException(HapiCode::UNKNOWN_DATASET_PARAMETER, "$requested_param is not part of dataset $dataset");
                 }
             }
+            return $parameters;
         }
-        $table = $this->getTableForDataset($dataset);
-        $time_column = $this->getTimeColumn($table);
-        $config = Config::getInstance();
+    }
 
-        // Move any metaparameters from the parameter list into the metaparameter list
+    /**
+     * Removes any metaparameters from the $parameters list and returns them as their own array.
+     */
+    private function ExtractRequestedMetaparameters(string $dataset, array &$parameters) : array {
+        // Move any metaparameters from the parameter list into the final parameter list list
+        $config = Config::getInstance();
         $metaparameters = $config->getWithDefault($dataset . '_metaparameters', array());
         foreach ($metaparameters as $name => $_) {
             // The metaparameters array starts out fully containing all metaparameters.
@@ -246,6 +257,17 @@ class PDODatabase implements DataRetrievalInterface {
                 unset($metaparameters[$name]);
             }
         }
+        return $metaparameters;
+    }
+
+    public function QueryData(string $dataset, array $parameters, DateTimeImmutable $start, DateTimeImmutable $stop): array {
+        $this->ValidateDatasetDates($dataset, $start, $stop);
+        $parameters = $this->GetValidQueryParameters($dataset, $parameters);
+        // This function modifies $parameters to literally extract the metaparameters
+        $metaparameters = $this->ExtractRequestedMetaparameters($dataset, $parameters);
+        $table = $this->getTableForDataset($dataset);
+        $time_column = $this->getTimeColumn($table);
+        $this->ApplySubsetFilter($dataset);
 
         $query = $this->statement_provider->QueryData($table, $time_column, $parameters, $metaparameters, $start, $stop);
         $result = $this->ExecuteStatementAndFetchResults($query, PDO::FETCH_NUM);
@@ -267,9 +289,28 @@ class PDODatabase implements DataRetrievalInterface {
     public function QueryDataCount(string $dataset, DateTimeImmutable $start, DateTimeImmutable $stop) : int {
         $table = $this->getTableForDataset($dataset);
         $time_column = $this->getTimeColumn($table);
+        $this->ApplySubsetFilter($dataset);
+
         $statement = $this->statement_provider->QueryDataCount($table, $time_column, $start, $stop);
         $result = $this->ExecuteStatementAndFetchResults($statement);
         return intval($result[0]['count']);
+    }
+
+    private function ApplySubsetFilter(string $dataset) {
+        $set = Dataset::fromName($dataset);
+        if ($set->IsSubset()) {
+            $filter = $this->GetSubsetFilter($set);
+            $this->statement_provider->SetFilter($filter->column, $filter->value);
+        }
+    }
+
+    private function GetSubsetFilter(Dataset $set) : SubsetInfo {
+        if ($set->IsSubset()) {
+            $subset = SubsetDataset::fromDataset($set);
+            return $subset->GetSubsetInfo();
+        } else {
+            throw new ValueError("Attempted to get subset info on non subset");
+        }
     }
 }
 

@@ -3,29 +3,21 @@
 use App\Util\Dataset;
 use PHPUnit\Framework\TestCase;
 
-final class DatasetTest extends TestCase {
+final class SubsetDatasetTest extends TestCase {
     public function testGetDatasetParameters() {
-        $dataset = Dataset::fromName('ExampleDataset');
+        $dataset = Dataset::fromName('SubsetDataset');
         $parameters = $dataset->GetParameters();
-        $this->assertCount(5, $parameters);
+        $this->assertCount(4, $parameters);
     }
 
     public function testDatasetIsInCatalog() {
-        $dataset = Dataset::fromName('ExampleDataset');
+        $dataset = Dataset::fromName('SubsetDataset');
         $this->assertTrue($dataset->IsInCatalog());
-
-        $dataset = Dataset::fromName('Bad dataset');
-        $this->assertFalse($dataset->IsInCatalog());
     }
 
     public function testGetTimeParameter() {
-        $dataset = Dataset::fromName('ExampleDataset');
-        $this->assertEquals("timestamp", $dataset->GetTimeParameter());
-    }
-
-    public function testIsInDataset() {
         $dataset = Dataset::fromName('SubsetDataset');
-        $this->assertTrue($dataset->IsSubset());
+        $this->assertEquals("timestamp", $dataset->GetTimeParameter());
     }
 
     public function testGetParentDataset() {

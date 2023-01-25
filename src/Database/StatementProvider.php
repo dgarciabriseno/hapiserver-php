@@ -7,6 +7,16 @@ use PDOStatement;
 
 interface StatementProvider {
     /**
+     * All requests following SetFilter should filter results based on the given column and value
+     */
+    public function SetFilter(string $column, $value);
+
+    /**
+     * Removes filters set with SetFilter
+     */
+    public function UnsetFilter();
+
+    /**
      * Returns a statement that will return the name of each column.
      * Required array keys in the select are:
      * - COLUMN_NAME

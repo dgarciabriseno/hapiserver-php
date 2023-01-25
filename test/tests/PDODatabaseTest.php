@@ -104,4 +104,20 @@ final class PDODatabaseTest extends TestCase {
         $this->assertTrue(in_array('string_data', $whitelist));
         $this->assertTrue(in_array('timestamp', $whitelist));
     }
+
+    public function testCanQuerySubsets() {
+        $db = new PDODatabase("App\Database\MySQLStatements");
+        $start = new DateTimeImmutable('2022-01-01 00:00:00');
+        $stop = new DateTimeImmutable('2022-02-01');
+        $results = $db->QueryData('SubsetDataset', array('decimal_data', 'string_data'), $start, $stop);
+        $this->assertCount(1, $results);
+    }
+
+    public function testGetsCorrectSubsetDates() {
+        $db = new PDODatabase("App\Database\MySQLStatements");
+        $start = $db->GetStartDate('SubsetDataset');
+        $stop = $db->GetStopDate('SubsetDataset');
+        // Test subset only has one record, so start should be the same as stop.
+        $this->assertEquals($start, $stop);
+    }
 }

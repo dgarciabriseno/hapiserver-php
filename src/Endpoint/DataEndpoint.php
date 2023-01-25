@@ -5,7 +5,6 @@ namespace App\Endpoint;
 use App\Database\Database;
 use App\Endpoint\Endpoint;
 use App\Exception\ConfigNotFoundException;
-use App\Exception\UnimplementedException;
 use App\Exception\UserInputException;
 use App\Response\DataResponse;
 use App\Response\HapiCode;
@@ -21,20 +20,20 @@ class DataEndpoint extends Endpoint {
         $dataset = $this->GetRequestedDataset();
         $start = $this->ValidateAndGetRequestedStartTime();
         $stop = $this->ValidateAndGetRequestedStopTime();
-        $this->VerifyStartStopIsWithinMaxRequestDuration($dataset, $start, $stop);
+        $this->VerifyStartStopIsWithinMaxRequestDuration($dataset->GetName(), $start, $stop);
         $this->ValidateStartDateIsBeforeEndDate($start, $stop);
         $parameters = $this->GetRequestedParameters();
 
-        $this->BlockRequestIfQueryExceedsRecordLimit($dataset, $start, $stop);
+        $this->BlockRequestIfQueryExceedsRecordLimit($dataset->GetName(), $start, $stop);
 
-        $data = $this->QueryData($dataset, $parameters, $start, $stop);
+        $data = $this->QueryData($dataset->GetName(), $parameters, $start, $stop);
 
         $format = $this->getRequestParameterWithDefault("format", "csv");
-        $this->RunPostprocessors($format, $dataset, $parameters, $data);
+        $this->RunPostprocessors($format, $dataset->GetName(), $parameters, $data);
 
         $header = array();
         if ($this->getRequestParameterWithDefault("include", "") == "header") {
-            $header = $this->GetDataHeader($dataset);
+            $header = $this->GetDataHeader($dataset->GetName());
         }
 
         $response = new DataResponse($data, $header);

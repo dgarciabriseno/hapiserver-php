@@ -47,5 +47,5 @@ final class ErrorHandlerTest extends TestCase {
 }
 
 class LoggerStub extends ErrorLogger {
-    public static function LogException(Exception $e) {}
+    public static function LogException(Throwable $e) {}
 }

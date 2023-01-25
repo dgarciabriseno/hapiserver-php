@@ -11,12 +11,34 @@ use App\Exception\ConfigNotFoundException;
 class Dataset {
     protected string $dataset;
 
-    public function __construct(string $dataset) {
+    public static function fromName(string $datasetName) : Dataset {
+        $dataset = new Dataset($datasetName);
+        if ($dataset->IsSubset()) {
+            return new SubsetDataset($datasetName);
+        }
+        return $dataset;
+    }
+
+    protected function __construct(string $dataset) {
         $this->dataset = $dataset;
     }
 
     public function GetName() {
         return $this->dataset;
+    }
+
+    public function IsSubset() : bool {
+        $subsets = $this->GetSubsets();
+        return array_key_exists($this->dataset, $subsets);
+    }
+
+    protected function GetSubsets() : array {
+        $config = Config::getInstance();
+        return $config->getWithDefault('subsets', array());
+    }
+
+    public function GetParentDataset() : Dataset {
+        return $this;
     }
 
     public function GetParameters() : array {

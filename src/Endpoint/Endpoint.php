@@ -95,7 +95,7 @@ class Endpoint {
                 throw new UserInputException(HapiCode::USER_ERROR, "Dataset was not provided");
             }
         }
-        return new Dataset($dataset);
+        return Dataset::fromName($dataset);
     }
 
     public function ValidateAndGetRequestedStartTime() : DateTimeImmutable {
