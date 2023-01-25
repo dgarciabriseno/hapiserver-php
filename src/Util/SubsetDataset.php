@@ -2,6 +2,7 @@
 
 namespace App\Util;
 
+use App\Database\Database;
 use ValueError;
 
 /**
@@ -48,5 +49,20 @@ class SubsetDataset extends Dataset {
 
     public function GetPostprocessors(): array {
         return $this->superset->GetPostprocessors();
+    }
+
+    public function GetMetadata(): array {
+        $parentMetadata = $this->superset->GetMetadata();
+        $subsetMetadata = $this->GetSubsetMetadata();
+
+        // Remove options that shouldn't be shared
+        unset($parentMetadata['description']);
+        // Anything in subsetMetadata will override parentMetadata during the merge.
+        return array_merge($parentMetadata, $subsetMetadata);
+    }
+
+    private function GetSubsetMetadata() : array {
+        $db = Database::getInstance();
+        return $db->GetDatasetMetadata($this->dataset);
     }
 }
