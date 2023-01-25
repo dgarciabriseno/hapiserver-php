@@ -37,11 +37,8 @@ class SubsetDataset extends Dataset {
         return $this->superset->GetTimeParameter();
     }
 
-    /**
-     * Returns dataset metadata including timestampLocation, cadence, description, etc.
-     */
-    public function GetMetadata() : array {
-        return $this->superset->GetMetadata();
+    public function GetParameters(): array {
+        return $this->superset->GetParameters();
     }
 
     public function GetSubsetInfo() : SubsetInfo {

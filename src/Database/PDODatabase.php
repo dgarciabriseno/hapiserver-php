@@ -107,23 +107,43 @@ class PDODatabase implements DataRetrievalInterface {
     }
 
     private function GetMetaparameterInfo(string $dataset) : array {
-        $config = Config::getInstance();
-        $metaparameters = $config->getWithDefault($dataset . '_metaparameters', array());
+        $metaparameters = $this->GetMetaparametersFromConfig($dataset);
         $parameters = array();
         foreach ($metaparameters as $meta => $_) {
             $param = array(
                 "name" => $meta,
-                "type" => $config->getWithDefault($dataset . '_' . $meta . '_type', 'Unspecified'),
+                "type" => $this->GetMetaparameterTypeFromConfig($dataset, $meta),
                 "description" => $this->GetParameterDescription($dataset, $meta),
                 "units" => $this->GetParameterUnit($dataset, $meta),
                 "fill" => null
             );
             if ($param['type'] == "string") {
-                $param = array_merge($param, array("length" => intval($config->getWithDefault($dataset . '_' . $meta . '_maxlength', 10000))));
+                $param = array_merge($param, array("length" => $this->GetMetaparameterMaxLengthFromConfig($dataset, $meta)));
             }
             array_push($parameters, $param);
         }
         return $parameters;
+    }
+
+    private function GetMetaparametersFromConfig(string $dataset) {
+        $set = Dataset::fromName($dataset);
+        $dataset = $set->GetParentDataset()->GetName();
+        $config = Config::getInstance();
+        return $config->getWithDefault($dataset . '_metaparameters', array());
+    }
+
+    private function GetMetaparameterTypeFromConfig(string $dataset, string $metaparam) : string {
+        $set = Dataset::fromName($dataset);
+        $dataset = $set->GetParentDataset()->GetName();
+        $config = Config::getInstance();
+        return $config->getWithDefault($dataset . '_' . $metaparam . '_type', 'Unspecified');
+    }
+
+    private function GetMetaparameterMaxLengthFromConfig(string $dataset, string $metaparam) : int {
+        $set = Dataset::fromName($dataset);
+        $dataset = $set->GetParentDataset()->GetName();
+        $config = Config::getInstance();
+        return intval($config->getWithDefault($dataset . '_' . $metaparam . '_maxlength', 10000));
     }
 
     public function GetColumnWhitelistForDataset(string $dataset) : array {
@@ -210,7 +230,7 @@ class PDODatabase implements DataRetrievalInterface {
         if (array_key_exists($parent_name, $mapping)) {
             return $mapping[$parent_name];
         } else {
-            return $dataset;
+            return $dataset_name;
         }
     }
 
