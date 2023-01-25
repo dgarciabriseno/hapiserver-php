@@ -45,4 +45,8 @@ class SubsetDataset extends Dataset {
         $subsets = $this->GetSubsets();
         return new SubsetInfo($subsets[$this->dataset]);
     }
+
+    public function GetPostprocessors(): array {
+        return $this->superset->GetPostprocessors();
+    }
 }

@@ -66,4 +66,9 @@ class Dataset {
         $db = Database::getInstance();
         return $db->GetDatasetMetadata($this->dataset);
     }
+
+    public function GetPostprocessors() : array {
+        $config = Config::getInstance();
+        return $config->getWithDefault($this->dataset . '_postprocessors', array());
+    }
 }

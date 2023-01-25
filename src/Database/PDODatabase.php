@@ -263,7 +263,7 @@ class PDODatabase implements DataRetrievalInterface {
     private function ExtractRequestedMetaparameters(string $dataset, array &$parameters) : array {
         // Move any metaparameters from the parameter list into the final parameter list list
         $config = Config::getInstance();
-        $metaparameters = $config->getWithDefault($dataset . '_metaparameters', array());
+        $metaparameters = $this->GetMetaparametersFromConfig($dataset);
         foreach ($metaparameters as $name => $_) {
             // The metaparameters array starts out fully containing all metaparameters.
             // parameters is the list of parameters requested by the user, some of which may be metaparameters.

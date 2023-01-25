@@ -9,6 +9,7 @@ use App\Exception\UserInputException;
 use App\Response\DataResponse;
 use App\Response\HapiCode;
 use App\Util\Config;
+use App\Util\Dataset;
 use App\Util\DatasetInfoReader;
 use DateInterval;
 use DateTime;
@@ -116,8 +117,8 @@ class DataEndpoint extends Endpoint {
      * Postprocessors are user-defined php scripts that may modify the data before sending it to the client.
      */
     public function RunPostprocessors(string $format, string $dataset, array $parameters, array &$data) {
-        $config = Config::getInstance();
-        $postprocessors = $config->getWithDefault($dataset . '_postprocessors', array());
+        $set = Dataset::fromName($dataset);
+        $postprocessors = $set->GetPostprocessors();
         if (!empty($postprocessors)) {
             $indices = $this->GetParameterIndices($dataset, $parameters);
             foreach ($postprocessors as $postprocessor) {
