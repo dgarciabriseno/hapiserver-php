@@ -1,3 +1,7 @@
+# Deprecation Notice
+This project is no longer maintained.
+Prefer using [server-nodejs](https://github.com/hapi-server/server-nodejs) when possible.
+
 ![CI Badge](https://github.com/dgarciabriseno/hapiserver-php/actions/workflows/php.yml/badge.svg)
 
 # hapiserver-php
